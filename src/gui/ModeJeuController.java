@@ -39,13 +39,17 @@ public class ModeJeuController {
 		
 		Button modeUn = new Button("Mode classique");
 		modeUn.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
-		modeUn.setOnAction( event -> onChoisirMode(event, 1));
+		modeUn.setOnAction( event -> onChoisirMode(event, 0));
 		
 		Button modeDeux = new Button("Mode avancé");
 		modeDeux.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
-		modeDeux.setOnAction( event -> onChoisirMode(event, 2));
+		modeDeux.setOnAction( event -> onChoisirMode(event, 1));
 		
-		HBox bLayout = new HBox(modeUn,modeDeux);
+		Button modeTrois = new Button("Mode aléatoire");
+		modeTrois.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
+		modeTrois.setOnAction( event -> onChoisirMode(event, 2));
+		
+		HBox bLayout = new HBox(modeUn,modeDeux,modeTrois);
 		bLayout.setAlignment(Pos.CENTER);
 		VBox gLayout = new VBox(crieurBanner,title,bLayout);
 		gLayout.setAlignment(Pos.CENTER);
@@ -98,7 +102,10 @@ public class ModeJeuController {
 		this.scene = new Scene(root,400,400);
     }
     public void onChoisirMode(ActionEvent event, int mode) {
-    	if(mode == 1) {
+    	if(mode==0) {
+    		this.onChoisirOrdre(event, 2, 1);
+    	}
+    	else if(mode == 1) {
     		this.createSceneFeuille();
     		this.stage.setScene(this.scene);
     	}else {
@@ -111,8 +118,6 @@ public class ModeJeuController {
 		 *  Altération du modèle
 		 */
     	this.gameMode.setIndexFeuille(value, ordre);
-    	this.gameMode.initPartie();
-    	
     	// Lancer la fenêtre du jeu
     	this.mainApp.showGameScene();
     }

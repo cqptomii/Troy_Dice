@@ -1,0 +1,30 @@
+/* application.css */
+
+/* Style global pour tous les boutons */
+#menuButton {
+    -fx-font-size: 16px;          /* Taille de la police */
+    -fx-font-family: "Arial";    /* Police */
+    -fx-background-color: #2a9df4; /* Couleur de fond */
+    -fx-text-fill: white;        /* Couleur du texte */
+    -fx-background-radius: 10;  /* Bords arrondis */
+    -fx-padding: 10;            /* Espacement interne */
+    -fx-cursor: hand;           /* Curseur en forme de main */
+}
+
+/* Style au survol */
+#menuButton:hover {
+    -fx-background-color: #1e7dc2; /* Couleur légèrement plus sombre */
+}
+
+/* Style au clic */
+#menuButton:pressed {
+    -fx-background-color: #145a8b; /* Couleur encore plus sombre */
+    -fx-text-fill: lightgray;     /* Couleur du texte changée */
+}
+
+/* Style spécifique pour un bouton avec une ID */
+#menuButton {
+    -fx-background-color: #4CAF50; /* Vert */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
