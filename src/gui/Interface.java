@@ -12,12 +12,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import core.Crieur;
 import core.Simulation;
 
 public class Interface extends Application{
 	private Stage primaryStage;
-	private GameController controller;
-	private String nomCrieur;
+	private Crieur nomCrieur;
 	
 	public void init() throws Exception{
 		super.init();
@@ -32,9 +32,6 @@ public class Interface extends Application{
 		this.primaryStage = primaryStage;
 		primaryStage.setTitle("Troy Dice");
 		primaryStage.setResizable(true);
-		
-		// Création du contrôleur avec l'instance de primaryStage
-		controller = new GameController(this,primaryStage);
 		
 		showMenuScene();
 //		new Thread(()-> {
@@ -72,14 +69,16 @@ public class Interface extends Application{
 		primaryStage.setTitle("UTBM Dice - créer joueur");
 		primaryStage.show();
 	}
-	protected void showModeJeuScene(String nomCrieur) {
-		this.nomCrieur = nomCrieur;
-		ModeJeuController mController = new ModeJeuController(this,primaryStage,nomCrieur);
+	protected void showModeJeuScene(Crieur crieur) {
+		this.nomCrieur = crieur;
+		ModeJeuController mController = new ModeJeuController(this,primaryStage,crieur);
 		primaryStage.setScene(mController.getScene());
 		primaryStage.show();
 	}	
 	protected void showGameScene() {
-		primaryStage.setScene(this.controller.getScene());
+		
+		GameController gController = new GameController(this,primaryStage,this.nomCrieur);
+		primaryStage.setScene(gController.getScene());
 		primaryStage.setTitle("UTBM Dice - Game");
 		primaryStage.show();
 	}

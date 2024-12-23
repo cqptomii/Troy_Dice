@@ -1,7 +1,6 @@
 package gui;
 
-import java.util.Random;
-
+import core.Crieur;
 import core.Simulation;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -19,9 +18,9 @@ public class ModeJeuController {
     private Stage stage;
     private Scene scene;
     private Simulation gameMode;
-    private String nomCrieur;
+    private Crieur nomCrieur;
     
-    public ModeJeuController(Interface mainApp, Stage stage,String nomCrieur) {
+    public ModeJeuController(Interface mainApp, Stage stage,Crieur nomCrieur) {
         this.mainApp = mainApp;
         this.stage = stage;
         this.gameMode = Simulation.getInstance();
@@ -30,7 +29,7 @@ public class ModeJeuController {
     }
 
     private void createSceneMode() {	
-		Label crieurBanner = new Label("Le crieur est :" + nomCrieur);
+		Label crieurBanner = new Label("Le crieur est :" + nomCrieur.getName());
 		crieurBanner.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 10;");
 
 		Label title = new Label("Choisissez le mode de jeu");
@@ -63,7 +62,7 @@ public class ModeJeuController {
 		this.scene = new Scene(root,400,400);
     }
     private void createSceneFeuille() {
-    	Label title = new Label(this.nomCrieur+ " choisis l'ordre des sections des feuilles de jeu");
+    	Label title = new Label(this.nomCrieur.getName() + " choisis l'ordre des sections des feuilles de jeu");
     	title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 10;");
 		
 		
@@ -118,12 +117,12 @@ public class ModeJeuController {
 		 *  Altération du modèle
 		 */
     	this.gameMode.setIndexFeuille(value, ordre);
+    	this.gameMode.initPartie();
     	// Lancer la fenêtre du jeu
     	this.mainApp.showGameScene();
     }
     public void onLancerDe(ActionEvent event, Label de) {
-    	Random randomEngine = new Random();
-    	int value = randomEngine.nextInt(1,7);
+    	int value = nomCrieur.lancerDe();
     	de.setText(""+value);
     }
     public Scene getScene() {

@@ -1,5 +1,5 @@
 package gui;
-import javafx.event.ActionEvent;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import core.Crieur;
 import core.Simulation;
 
 public class SaisiJoueurController {
@@ -48,7 +49,7 @@ public class SaisiJoueurController {
                 if (gameMode.getNbJoueurs() < gameMode.getNombreJoueur()) {
                     mainApp.showSaisieJoueurScene();
                 } else {
-                    String crieur = gameMode.choisirCrieur();
+                    Crieur crieur = gameMode.choisirCrieur();
                     mainApp.showModeJeuScene(crieur);
                 }
             } catch (Exception e) {

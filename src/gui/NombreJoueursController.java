@@ -1,6 +1,5 @@
 package gui;
 import core.Simulation;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
