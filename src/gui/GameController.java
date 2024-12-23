@@ -161,21 +161,19 @@ public class GameController {
     private void updateButtonBackground(Button placeButton, Place p) {
         String imageUrl;
         
-        int face = p.getFaceVisible(); // Récupérer l'état de la face (par exemple 1, 2, ou autre)
+        int face = p.getFaceVisible();
         
-        // Choisir l'image en fonction de l'état de la place
         if (face == 1) {
-            imageUrl = "/images/gris.png"; // Image gris
+            imageUrl = "/images/gris.png";
         } else if (face == 2) {
-            imageUrl = "/images/orange.png"; // Image orange
+            imageUrl = "/images/orange.png";
         } else {
-            imageUrl = "/images/bleu.png"; // Image bleu
+            imageUrl = "/images/bleu.png";
         }
         
-        // Appliquer l'image de fond au bouton
         placeButton.setStyle("-fx-background-image: url('" + getClass().getResource(imageUrl).toExternalForm() + "');" +
                              "-fx-background-size: cover;" + 
-                             "-fx-background-radius: 50;" +  // Cercle
+                             "-fx-background-radius: 50;" +
                              "-fx-min-width: 100;" + 
                              "-fx-min-height: 100;");
     }
