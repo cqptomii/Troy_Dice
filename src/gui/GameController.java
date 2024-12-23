@@ -5,11 +5,20 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import plateau.De;
 import plateau.Place;
 
 
@@ -30,97 +39,180 @@ public class GameController {
         createScene();
     }
     private void createScene() {
-    	Label gameLabel = new Label("Le jeu commence");
-    	
-        HBox root = new HBox();
-		root.setAlignment(Pos.CENTER);
-		
-		//Affichage du plateau
-		Image plateau = new Image("/images/1.png");
-        ImageView imageViewPlateau = new ImageView(plateau);
+        StackPane root = new StackPane();
+        
+        Image backgroundImage = new Image(getClass().getResource("/images/game_background.jpg").toExternalForm());
+        ImageView backgroundView = new ImageView(backgroundImage);
 
-        imageViewPlateau.setFitWidth(300); 
-        imageViewPlateau.setFitHeight(200); 
+        root.getChildren().add(backgroundView);
+
+        HBox uiElements = new HBox(20);
+        uiElements.setAlignment(Pos.CENTER);
+
+        // Affichage du plateau
+        Image plateau = new Image(getClass().getResource("/images/1.png").toExternalForm());
+        ImageView imageViewPlateau = new ImageView(plateau);
         imageViewPlateau.setPreserveRatio(true);
+
         
+        //Affichage des places et des dés
         Group plateauGroup = new Group();
-        plateauGroup.getChildren().add(imageViewPlateau);	
-        
-        //Affichage des places et des dés sur le plateau
-        
+        plateauGroup.getChildren().add(imageViewPlateau);
+
         Place[] places = this.gameMode.getPlateau().getPlace();
         
-        for( Place p : places) {
-        	
-        	Group placeGroup = new Group();
-        	
-        	ImageView place = this.drawPlace(p);
-        	ImageView de = this.drawDe(p);
-        	
-        	placeGroup.getChildren().addAll(place,de);
-        	plateauGroup.getChildren().add(placeGroup);
+        int nombreImages = 9;
+        if (places.length < nombreImages) {
+            System.out.println("Erreur : pas assez de places disponibles !");
+            return;
         }
         
-        // Affichage de la feuille de jeu
-        Image feuille = new Image("/images/feuille.png");
+        imageViewPlateau.boundsInParentProperty().addListener((obs, oldBounds, newBounds) -> {
+        	
+            double displayedWidth = newBounds.getWidth();
+            double displayedHeight = newBounds.getHeight();
+            double rayon = Math.min(displayedWidth, displayedHeight) / 2;
+            double centerX = newBounds.getMinX() + displayedWidth / 2;
+            double centerY = newBounds.getMinY() + displayedHeight / 2;
 
+            plateauGroup.getChildren().clear();
+            plateauGroup.getChildren().add(imageViewPlateau);
+
+            for (int i = 0; i < nombreImages; i++) {
+                double angle = Math.toRadians(90) + Math.toRadians(40) * i;
+                double imageX = centerX + (rayon + 25) * Math.cos(angle) - 50;
+                double imageY = centerY + (rayon + 25) * Math.sin(angle) - 55;
+
+                Place p = places[i];
+                Group placeGroup = new Group();
+
+                Button place = this.drawPlace(p, imageX, imageY);
+                ImageView de = this.drawDe(p, imageX, imageY);
+
+                if (place != null) placeGroup.getChildren().add(place);
+                if (de != null) placeGroup.getChildren().add(de);
+
+                plateauGroup.getChildren().add(placeGroup);
+            }
+        });
+
+        VBox choisirDe = this.drawToolDe();
+
+        Image feuille = new Image(getClass().getResource("/images/feuille.png").toExternalForm());
         ImageView imageViewFeuille = new ImageView(feuille);
-
-        imageViewFeuille.setFitWidth(300); 
-        imageViewFeuille.setFitHeight(200); 
-        imageViewFeuille.setPreserveRatio(true);
         
-        root.getChildren().addAll(imageViewPlateau,imageViewFeuille);
-		
-		this.scene = new Scene(root,400,400);		
+        imageViewFeuille.setFitWidth(300);
+        imageViewFeuille.setFitHeight(200);
+        imageViewFeuille.setPreserveRatio(true);
+
+        
+        uiElements.getChildren().addAll(plateauGroup, choisirDe, imageViewFeuille);
+
+        root.getChildren().add(uiElements);
+
+        this.scene = new Scene(root, 1280, 800);
+
+        backgroundView.fitWidthProperty().bind(scene.widthProperty());
+        backgroundView.fitHeightProperty().bind(scene.heightProperty());
+        imageViewPlateau.fitWidthProperty().bind(scene.widthProperty().multiply(0.30));
+        imageViewPlateau.fitHeightProperty().bind(scene.heightProperty().subtract(20));
+
+        choisirDe.prefWidthProperty().bind(scene.widthProperty().multiply(0.15));
+        choisirDe.prefHeightProperty().bind(scene.heightProperty().multiply(0.3));
+
+        imageViewFeuille.fitWidthProperty().bind(scene.widthProperty().multiply(0.40));
+        imageViewFeuille.fitHeightProperty().bind(scene.heightProperty().subtract(20));
     }
+
     public Scene getScene() {
     	return this.scene;
     }
-    private ImageView drawPlace(Place p) {
-    	ImageView place;
-    	int face = p.getFaceVisible();
-    	if(face == 1) {
-    		//Ajouter la place grise comme descendant du groupe
-    		Image placeGrise = new Image("/images/gris.png");
-    		place = new ImageView(placeGrise);
-    	}else if(face==2) {
-    		//Ajouter la place orange comme descendant du groupe
-    		Image placeOrange = new Image("/images/orange.png");
-    		place = new ImageView(placeOrange);
-    	}else{
-    		//Ajouter la place bleu comme descendant du groupe
-    		Image placeBleu = new Image("/images/bleu.png");
-    		place = new ImageView(placeBleu);
+    private VBox drawToolDe() {
+    	VBox temp = new VBox(5);
+    	De de = this.gameMode.getDeChoisi();
+    	if(de == null) {
+    		Label title = new Label("Aucun dé choisi pour l'instant");
+    		
+    		temp.getChildren().addAll(title);
     	}
     	
-    	place.setFitWidth(100);
-    	place.setFitHeight(100);
-    	place.setPreserveRatio(true);
-
-    	place.setX(250);
-    	place.setY(300);
+    	return temp;
     	
-    	return place;
+    }
+    private Button drawPlace(Place p, double x, double y) {
+        Button placeButton = new Button();
+        
+        placeButton.setPrefSize(100, 100);
+        placeButton.setMaxSize(100, 100);
+        placeButton.setMinSize(100, 100);
+        
+        updateButtonBackground(placeButton, p);
+        
+        placeButton.setLayoutX(x);
+        placeButton.setLayoutY(y);
+
+        placeButton.setOnAction(e -> {
+            System.out.println("Bouton cliqué");
+        });
+
+        return placeButton;
+    }
+
+    private void updateButtonBackground(Button placeButton, Place p) {
+        String imageUrl;
+        
+        int face = p.getFaceVisible(); // Récupérer l'état de la face (par exemple 1, 2, ou autre)
+        
+        // Choisir l'image en fonction de l'état de la place
+        if (face == 1) {
+            imageUrl = "/images/gris.png"; // Image gris
+        } else if (face == 2) {
+            imageUrl = "/images/orange.png"; // Image orange
+        } else {
+            imageUrl = "/images/bleu.png"; // Image bleu
+        }
+        
+        // Appliquer l'image de fond au bouton
+        placeButton.setStyle("-fx-background-image: url('" + getClass().getResource(imageUrl).toExternalForm() + "');" +
+                             "-fx-background-size: cover;" + 
+                             "-fx-background-radius: 50;" +  // Cercle
+                             "-fx-min-width: 100;" + 
+                             "-fx-min-height: 100;");
     }
     
-    private ImageView drawDe(Place p) {
-    	if(p.getDe() == null)
+    private ImageView drawDe(Place p,double x,double y) {
+    	if(p.getDe() == null) {
+    		System.out.println("Aucun dé pour la place : " + p);
     		return null;
+    	}
     	int color = p.getDe().getCouleur();
     	int valeur = p.getDe().getValeur();
     	ImageView de;
-    	if(color == 0) {
-    		String src = "n" + valeur + ".png";
-    		Image deNoir = new Image("/images/" + src);
-    		de = new ImageView(deNoir);
-    	}else {
-    		String src = "t" + valeur + ".png";
-    		Image deTransparent = new Image("/images/" + src);
-    		de = new ImageView(deTransparent);
+    	
+    	try {
+	    	if(color == 0) {
+	    		String src = "n" + valeur + ".png";
+	    		Image deNoir = new Image(getClass().getResource("/images/" + src).toExternalForm());
+	    		de = new ImageView(deNoir);
+	    	}else {
+	    		String src = "t" + valeur + ".png";
+	    		Image deTransparent = new Image(getClass().getResource("/images/" + src).toExternalForm());
+	    		de = new ImageView(deTransparent);
+	    	}
+	    	
+	    	de.setFitWidth(50);
+	    	de.setFitHeight(50);
+	    	de.setPreserveRatio(true);
+	    	
+	    	de.setX(x);
+	    	de.setY(y);
+	    	return de;
+    	}catch(Exception e) {
+    		System.err.println("Erreur lors du chargement de l'image pour le dé (couleur: " + color + ", valeur: " + valeur + ")");
+            e.printStackTrace();
+            return null;
     	}
     	
-    	return de;
     }
     private Scene createNombreJoueursScene(Stage primaryStage) {
     	
