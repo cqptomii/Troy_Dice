@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -36,7 +37,8 @@ public class GameController {
     private Simulation gameMode;
     private Crieur crieur;
     
-    private int tour;
+    
+    private StackPane choisirDe;
     public GameController(Interface app,Stage primaryStage,Crieur crieur) {
         this.mainApp = app;
         this.primaryStage = primaryStage;
@@ -60,11 +62,12 @@ public class GameController {
         //
         //	Affichage de l'état du jeu
         //
-        this.tour = this.gameMode.getTour();
-        Label tour = new Label("Semestre numéro: " + this.tour);
-
+        Label tour = new Label();
 	    tour.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-	
+	    
+	    tour.textProperty().bind(this.gameMode.tourProperty().asString("Semestre numéro: %d"));
+
+	    
 	    HBox topLeftContainer = new HBox(tour);
 	    topLeftContainer.setAlignment(Pos.TOP_LEFT);
 	    topLeftContainer.setPadding(new Insets(10, 0, 0, 10));
@@ -73,12 +76,17 @@ public class GameController {
         //
         // AFFICHAGE DU PLATEAU
         //
-        
-        Image plateau = new Image(getClass().getResource("/images/"+this.tour+".png").toExternalForm());
+        Image plateau = new Image(getClass().getResource("/images/" + this.gameMode.getTour() + ".png").toExternalForm());
         ImageView imageViewPlateau = new ImageView(plateau);
         imageViewPlateau.setPreserveRatio(true);
-
-        
+          
+        this.gameMode.tourProperty().addListener((obs, oldTour, newTour) -> {
+            if (newTour != null) {
+                String imagePath = "/images/" + newTour.intValue() + ".png";
+                Image temp = new Image(getClass().getResource(imagePath).toExternalForm());
+                imageViewPlateau.setImage(temp);
+            }
+        });
         //Affichage des places et des dés
         Group plateauGroup = new Group();
         plateauGroup.getChildren().add(imageViewPlateau);
@@ -92,39 +100,27 @@ public class GameController {
         }
         
         imageViewPlateau.boundsInParentProperty().addListener((obs, oldBounds, newBounds) -> {
-        	
-            double displayedWidth = newBounds.getWidth();
-            double displayedHeight = newBounds.getHeight();
-            double rayon = Math.min(displayedWidth, displayedHeight) / 2;
-            double centerX = newBounds.getMinX() + displayedWidth / 2;
-            double centerY = newBounds.getMinY() + displayedHeight / 2;
-
-            plateauGroup.getChildren().clear();
-            plateauGroup.getChildren().add(imageViewPlateau);
-
-            for (int i = 0; i < nombreImages; i++) {
-                double angle = Math.toRadians(90) + Math.toRadians(40) * i;
-                double imageX = centerX + (rayon + 25) * Math.cos(angle) - 50;
-                double imageY = centerY + (rayon + 25) * Math.sin(angle) - 55;
-
-                Place p = places[i];
-                Group placeGroup = new Group();
-
-                Button place = this.drawPlace(p, imageX, imageY);
-                ImageView de = this.drawDe(p, imageX, imageY);
-
-                if (place != null) placeGroup.getChildren().add(place);
-                if (de != null) placeGroup.getChildren().add(de);
-
-                plateauGroup.getChildren().add(placeGroup);
+            if (newBounds != null) {
+                updatePlateauGroup(newBounds, plateauGroup, imageViewPlateau, places, nombreImages);
             }
         });
+        
+        this.gameMode.tourProperty().addListener((obs, oldTour, newTour) -> {
+            if (newTour != null) {
+                // Force le recalcul des dés et des places
+                Bounds bounds = imageViewPlateau.getBoundsInParent();
+                if (bounds != null) {
+                    updatePlateauGroup(bounds, plateauGroup, imageViewPlateau, places, nombreImages);
+                }
+            }
+        });
+        
         
         //
         //  AFFICHAGE DE LA BOITE DE CHOISI
         //
         
-        StackPane choisirDe = this.drawToolDe();
+        choisirDe = this.drawToolDe();
         choisirDe.setAlignment(Pos.CENTER);
         
         //
@@ -142,9 +138,19 @@ public class GameController {
         
         
         //Affichage du nom du joueur 
-        System.out.println("Nom du joueur : " + this.gameMode.getJoueurTour().getName());
-        Label nomJoueur = new Label(this.gameMode.getJoueurTour().getName());
+        Label nomJoueur = new Label(this.gameMode.getTourJoueur().getName());
         nomJoueur.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        this.gameMode.tourJoueurProperty().addListener((obs, oldJoueur, newJoueur) -> {
+            if (newJoueur != null) {
+                nomJoueur.setText(newJoueur.getName());
+            } else {
+                nomJoueur.setText("Aucun joueur");
+            }
+        });
+        System.out.println("Nom du joueur : " + this.gameMode.getTourJoueur().getName());
+        
+        
         feuillePane.getChildren().add(nomJoueur);
         
         VBox feuilleBox = new VBox(0);
@@ -352,8 +358,6 @@ public class GameController {
     	StackPane stackPane = new StackPane();
     	
     	Rectangle backgroundRectangle = new Rectangle();
-        backgroundRectangle.setWidth(200);
-        backgroundRectangle.setHeight(120);
         backgroundRectangle.setArcWidth(10);
         backgroundRectangle.setArcHeight(10);
         backgroundRectangle.setFill(Color.WHITE);
@@ -366,66 +370,110 @@ public class GameController {
                       "-fx-min-width: 200; -fx-max-width: 200;"); 
         
         stackPane.getChildren().add(backgroundRectangle);
+        
+        VBox modificationContainer = new VBox(10);
+        modificationContainer.setAlignment(Pos.CENTER);
 
-        De dechoisi = this.gameMode.getDeChoisi();
         Label title = new Label("Dé choisi :");
         title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
       
-        if(dechoisi == null) {
-	        Label status = new Label("Aucun dé sélectionné actuellement.");
-	        status.setWrapText(true);
-	        status.setStyle("-fx-font-size: 14px;");
-	
-	
-	        temp.getChildren().addAll(title, status);
-        }else {
-        	
-        	int value = dechoisi.getValeur();
-        	int color = dechoisi.getCouleur();
-        	
-        	Label colorLabel = new Label("Modifier la couleur :");
-        	colorLabel.setWrapText(true);
-        	colorLabel.setStyle("-fx-font-size: 14px;");
-        	HBox colorBox = new HBox(5);
-        	for(int i = 1; i < 4;++i) {
-        		Button colorButton = new Button();
-        		colorButton.setOnAction(event ->{
-            		System.out.println("Couleur");
-            	});
-        		colorBox.getChildren().add(colorButton);
-        	}
-        	Label valueLabel = new Label("Modifier la valeur :");
-        	valueLabel.setWrapText(true);
-        	valueLabel.setStyle("-fx-font-size: 14px;");
-        	
-        	HBox valueBox = new HBox(5);
-        	for(int i = 1; i < 7;++i) {
-        		if(i == value) {
-        			continue;
-        		}
-        		Button valueButton = new Button();
-        		valueButton.setOnAction(event ->{
-            		System.out.println("Valeur");
-            	});
-        		valueBox.getChildren().add(valueButton);
-        	}
-        	
-        	Button valider = new Button("Valider");
-        	Button reset = new Button("Reset");
-        	
-        	
-        	valider.setOnAction(event ->{
-        		System.out.println("Valider");
-        	});
-        	reset.setOnAction(event ->{
-        		System.out.println("Reset");
-        	});
-        	temp.getChildren().addAll(title, colorLabel,colorBox,valueLabel,valueBox,valider,reset);
-        }
+        modificationContainer.getChildren().add(title);
+
+        Label status = new Label();
+        status.setWrapText(true);
+        status.setStyle("-fx-font-size: 14px;");
+        modificationContainer.getChildren().add(status);
         
+        temp.getChildren().add(modificationContainer);
+        this.gameMode.deChoisiProperty().addListener((obs, oldDe, newDe) -> {
+            modificationContainer.getChildren().clear();
+            modificationContainer.getChildren().add(title);
+            modificationContainer.getChildren().add(status);
+            if (newDe == null) {
+                status.setText("Aucun dé sélectionné actuellement.");
+            } else {
+                int value = newDe.getValeur();
+                int color = newDe.getCouleur();
+
+                status.setText(String.format("Dé sélectionné : Valeur = %d, Couleur = %d", value, color));
+
+                // Section pour modifier la couleur
+                Label colorLabel = new Label("Modifier la couleur :");
+                colorLabel.setStyle("-fx-font-size: 14px;");
+                HBox colorBox = new HBox(5);
+                colorBox.setAlignment(Pos.CENTER);
+                for (int i = 1; i <= 3; ++i) {
+                    if (i != color) {
+                        Button colorButton = new Button("Couleur " + i);
+                        colorButton.setOnAction(event -> {
+                            System.out.println("Couleur modifiée : ");
+                            // Logique pour modifier la couleur du dé
+                        });
+                        colorBox.getChildren().add(colorButton);
+                    }
+                }
+
+                // Section pour modifier la valeur
+                Label valueLabel = new Label("Modifier la valeur :");
+                valueLabel.setStyle("-fx-font-size: 14px;");
+                HBox valueBox = new HBox(5);
+                valueBox.setAlignment(Pos.CENTER);
+                for (int i = 1; i <= 6; ++i) {
+                    if (i != value) {
+                        Button valueButton = new Button(String.valueOf(i));
+                        valueButton.setOnAction(event -> {
+                            System.out.println("Valeur modifiée : ");
+                        });
+                        valueBox.getChildren().add(valueButton);
+                    }
+                }
+
+                Button valider = new Button("Valider");
+                valider.setOnAction(event -> {
+                    System.out.println("Modifications validées.");
+                });
+
+                Button reset = new Button("Reset");
+                reset.setOnAction(event -> {
+                    System.out.println("Modifications réinitialisées.");
+                });
+
+                modificationContainer.getChildren().addAll(colorLabel, colorBox, valueLabel, valueBox, valider, reset);
+            }
+        });
+        backgroundRectangle.widthProperty().bind(modificationContainer.widthProperty());
+        backgroundRectangle.heightProperty().bind(modificationContainer.heightProperty());
         stackPane.getChildren().add(temp);
 
         return stackPane;
+    }
+     
+    private void updatePlateauGroup(Bounds bounds, Group plateauGroup, ImageView imageViewPlateau, Place[] places, int nombreImages) {
+        double displayedWidth = bounds.getWidth();
+        double displayedHeight = bounds.getHeight();
+        double rayon = Math.min(displayedWidth, displayedHeight) / 2;
+        double centerX = bounds.getMinX() + displayedWidth / 2;
+        double centerY = bounds.getMinY() + displayedHeight / 2;
+
+        plateauGroup.getChildren().clear();
+        plateauGroup.getChildren().add(imageViewPlateau);
+
+        for (int i = 0; i < nombreImages; i++) {
+            double angle = Math.toRadians(90) + Math.toRadians(40) * i;
+            double imageX = centerX + (rayon + 25) * Math.cos(angle) - 50;
+            double imageY = centerY + (rayon + 25) * Math.sin(angle) - 55;
+
+            Place p = places[i];
+            Group placeGroup = new Group();
+
+            Button place = this.drawPlace(p, imageX, imageY);
+            ImageView de = this.drawDe(p, imageX, imageY);
+
+            if (place != null) placeGroup.getChildren().add(place);
+            if (de != null) placeGroup.getChildren().add(de);
+
+            plateauGroup.getChildren().add(placeGroup);
+        }
     }
     private Button drawPlace(Place p, double x, double y) {
         Button placeButton = new Button();
@@ -440,8 +488,9 @@ public class GameController {
         placeButton.setLayoutY(y);
 
         placeButton.setOnAction(e -> {
-        	if(this.gameMode.getDeChoisi() == null)
+        	if(this.gameMode.getDeChoisi() == null) {
         		this.gameMode.choixDé(p);
+        	}
         });
 
         return placeButton;
@@ -465,7 +514,6 @@ public class GameController {
                              "-fx-min-width: 100;" + 
                              "-fx-min-height: 100;");
     }
-    
     private ImageView drawDe(Place p,double x,double y) {
     	if(p.getDe() == null) {
     		return null;
@@ -499,6 +547,11 @@ public class GameController {
     	}
     	
     }
+    
+    private StackPane drawFeuille() {
+    	return null;
+    }
+    
     private Scene createNombreJoueursScene(Stage primaryStage) {
     	
     	
