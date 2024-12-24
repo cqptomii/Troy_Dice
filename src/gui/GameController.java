@@ -142,16 +142,10 @@ public class GameController {
         
         
         //Affichage du nom du joueur 
-        
+        System.out.println("Nom du joueur : " + this.gameMode.getJoueurTour().getName());
         Label nomJoueur = new Label(this.gameMode.getJoueurTour().getName());
         nomJoueur.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-    	
-	    HBox nomContainer = new HBox(tour);
-	    nomContainer.setAlignment(Pos.TOP_LEFT);
-	    nomContainer.setPadding(new Insets(10, 0, 0, 10));
-	    feuillePane.getChildren().add(nomContainer);
-        
-        
+        feuillePane.getChildren().add(nomJoueur);
         
         VBox feuilleBox = new VBox(0);
         HBox indexBox1 = this.drawIndexSection();
@@ -198,7 +192,6 @@ public class GameController {
         
         
         feuilleUiElements.getChildren().addAll(feuilleBox,scoreBox);
-        
         StackPane.setMargin(indexBox1,new Insets(10,0,0,90));
         StackPane.setMargin(indexBox2,new Insets(10,0,0,90));
         StackPane.setMargin(indexBox3,new Insets(10,0,0,90));
@@ -209,9 +202,8 @@ public class GameController {
         
         imageViewFeuille.boundsInLocalProperty().addListener((obs, oldBounds, newBounds) -> {
             double height = newBounds.getHeight();
-            
-            HBox.setMargin(nomContainer, new Insets(height *0.2,0,0, height * 0.4));
-            HBox.setMargin(scoreBox, new Insets(height * 0.4, 0,0,-height * 0.8));
+            StackPane.setMargin(nomJoueur, new Insets(-height/2,0,0,+height*0.05));
+            HBox.setMargin(scoreBox, new Insets(height * 0.4, 0,0,-height* 0.06));
             VBox.setMargin(quartier1Pane, new Insets(height / 3, 0, -7, 30));
             VBox.setMargin(quartier2Pane, new Insets(0, 0, -7, 30));
             VBox.setMargin(quartier3Pane, new Insets(0, 0, -5, 30));
@@ -220,7 +212,6 @@ public class GameController {
         });
         
         feuillePane.getChildren().add(feuilleUiElements);
-        
         uiElements.getChildren().addAll(plateauGroup, choisirDe, feuillePane);
         
         
@@ -331,10 +322,11 @@ public class GameController {
     	
     	for(int i = 1; i < 2; ++i) {
 	    	Label scorePrestige = new Label(String.valueOf(0));
+	    	scorePrestige.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 	    	Label scoreTravail = new Label(String.valueOf(0));
-	    	
+	    	scoreTravail.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 	    	Label total = new Label(String.valueOf(0));
-	    	
+	    	total.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 	    	scoreBox.getChildren().addAll(scorePrestige,scoreTravail,total);
     	}
     	
@@ -342,11 +334,13 @@ public class GameController {
     	HBox temp = new HBox(20);
     	
     	Label scorePion = new Label(String.valueOf(0));
+    	scorePion.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
     	Label scoreQuartier = new Label(String.valueOf(0));
-    	
+    	scoreQuartier.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
     	temp.getChildren().addAll(scorePion,scoreQuartier);
     	
     	Label scoreFinal = new Label(String.valueOf(0));
+    	scoreFinal.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
     	scoreBox.getChildren().addAll(temp,scoreFinal);
     	
     	return scoreBox;
@@ -446,7 +440,8 @@ public class GameController {
         placeButton.setLayoutY(y);
 
         placeButton.setOnAction(e -> {
-            System.out.println("Bouton cliqué");
+        	if(this.gameMode.getDeChoisi() == null)
+        		this.gameMode.choixDé(p);
         });
 
         return placeButton;
@@ -473,7 +468,6 @@ public class GameController {
     
     private ImageView drawDe(Place p,double x,double y) {
     	if(p.getDe() == null) {
-    		System.out.println("Aucun dé pour la place : " + p);
     		return null;
     	}
     	int color = p.getDe().getCouleur();
@@ -495,8 +489,8 @@ public class GameController {
 	    	de.setFitHeight(50);
 	    	de.setPreserveRatio(true);
 	    	
-	    	de.setX(x);
-	    	de.setY(y);
+	    	de.setX(x+25);
+	    	de.setY(y+25);
 	    	return de;
     	}catch(Exception e) {
     		System.err.println("Erreur lors du chargement de l'image pour le dé (couleur: " + color + ", valeur: " + valeur + ")");

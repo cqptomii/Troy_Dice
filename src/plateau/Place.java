@@ -30,6 +30,8 @@ public class Place {
 		
 		if(this.gainsDe == null) {
 			this.gainsDe = valeur;
+			if(this.gainsDe.getCouleur() != 0)
+				this.gainsDe.setColorFromPlace(this);
 		}
 	}
 	

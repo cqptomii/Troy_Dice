@@ -34,19 +34,6 @@ public class Interface extends Application{
 		primaryStage.setResizable(true);
 		
 		showMenuScene();
-//		new Thread(()-> {
-//			try {
-//				Thread.sleep(5000);
-//				
-//				Platform.runLater(()->{
-//					primaryStage.hide();
-//				});
-//					
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}).start();
 	}
 	private void showMenuScene() {
 		MenuController menuController = new MenuController(this,primaryStage);

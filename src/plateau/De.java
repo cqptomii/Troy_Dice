@@ -34,7 +34,7 @@ public class De {
 		}
 	}
 	protected void setCouleur(int couleur) {
-		if(this.couleur > 0 && this.couleur < 4) {
+		if(this.couleur >= 0 && this.couleur < 4) {
 			this.couleur = couleur;
 		}
 	}
