@@ -13,7 +13,7 @@ public class Plateau {
 	public Plateau() {
 		this.places = new Place[9];
 		this.indexPlace = new int[9];
-		this.demiTour = false;
+		this.demiTour = false ;
 		
 		this.listePrixPlace = new ArrayList<Integer[]>();
 		this.initListePrix();
@@ -94,6 +94,9 @@ public class Plateau {
 	}
 	public Place getPlaceDeNoir() {
 		return null;
+	}
+	public boolean getDemiTour() {
+		return this.demiTour;
 	}
 	public String toString() {
 		for(int i = 0; i < 9; i++) {

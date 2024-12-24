@@ -35,6 +35,8 @@ public class GameController {
     private Scene scene;
     private Simulation gameMode;
     private Crieur crieur;
+    
+    private int tour;
     public GameController(Interface app,Stage primaryStage,Crieur crieur) {
         this.mainApp = app;
         this.primaryStage = primaryStage;
@@ -53,11 +55,26 @@ public class GameController {
         HBox uiElements = new HBox(20);
         uiElements.setAlignment(Pos.CENTER);
         
+        
+        
+        //
+        //	Affichage de l'état du jeu
+        //
+        this.tour = this.gameMode.getTour();
+        Label tour = new Label("Semestre numéro: " + this.tour);
+
+	    tour.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+	
+	    HBox topLeftContainer = new HBox(tour);
+	    topLeftContainer.setAlignment(Pos.TOP_LEFT);
+	    topLeftContainer.setPadding(new Insets(10, 0, 0, 10));
+        
+        root.getChildren().add(topLeftContainer);
         //
         // AFFICHAGE DU PLATEAU
         //
         
-        Image plateau = new Image(getClass().getResource("/images/1.png").toExternalForm());
+        Image plateau = new Image(getClass().getResource("/images/"+this.tour+".png").toExternalForm());
         ImageView imageViewPlateau = new ImageView(plateau);
         imageViewPlateau.setPreserveRatio(true);
 
@@ -123,6 +140,19 @@ public class GameController {
         
         StackPane feuillePane = new StackPane(imageViewFeuille);
         
+        
+        //Affichage du nom du joueur 
+        
+        Label nomJoueur = new Label(this.gameMode.getJoueurTour().getName());
+        nomJoueur.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+    	
+	    HBox nomContainer = new HBox(tour);
+	    nomContainer.setAlignment(Pos.TOP_LEFT);
+	    nomContainer.setPadding(new Insets(10, 0, 0, 10));
+	    feuillePane.getChildren().add(nomContainer);
+        
+        
+        
         VBox feuilleBox = new VBox(0);
         HBox indexBox1 = this.drawIndexSection();
         HBox indexBox2 = this.drawIndexSection();
@@ -162,6 +192,13 @@ public class GameController {
        
         feuilleBox.getChildren().addAll(quartier1Pane,quartier2Pane,quartier3Pane,imageViewPion);
         
+        HBox feuilleUiElements = new HBox();
+        
+        VBox scoreBox = this.drawScore();
+        
+        
+        feuilleUiElements.getChildren().addAll(feuilleBox,scoreBox);
+        
         StackPane.setMargin(indexBox1,new Insets(10,0,0,90));
         StackPane.setMargin(indexBox2,new Insets(10,0,0,90));
         StackPane.setMargin(indexBox3,new Insets(10,0,0,90));
@@ -169,22 +206,27 @@ public class GameController {
         StackPane.setMargin(bat2,new Insets(35,0,0,80));
         StackPane.setMargin(bat3,new Insets(35,0,0,80));
         
+        
         imageViewFeuille.boundsInLocalProperty().addListener((obs, oldBounds, newBounds) -> {
             double height = newBounds.getHeight();
-         
+            
+            HBox.setMargin(nomContainer, new Insets(height *0.2,0,0, height * 0.4));
+            HBox.setMargin(scoreBox, new Insets(height * 0.4, 0,0,-height * 0.8));
             VBox.setMargin(quartier1Pane, new Insets(height / 3, 0, -7, 30));
             VBox.setMargin(quartier2Pane, new Insets(0, 0, -7, 30));
             VBox.setMargin(quartier3Pane, new Insets(0, 0, -5, 30));
             VBox.setMargin(imageViewPion, new Insets(0, 15, 0, 30));
+           
         });
         
-        feuillePane.getChildren().add(feuilleBox);
+        feuillePane.getChildren().add(feuilleUiElements);
         
         uiElements.getChildren().addAll(plateauGroup, choisirDe, feuillePane);
-
+        
+        
         root.getChildren().add(uiElements);
 
-        this.scene = new Scene(root, 1280, 800);
+        this.scene = new Scene(root, 720*2, 576*2);
        
         backgroundView.fitWidthProperty().bind(scene.widthProperty());
         backgroundView.fitHeightProperty().bind(scene.heightProperty());
@@ -202,6 +244,16 @@ public class GameController {
         imageViewQuartier3.fitWidthProperty().bind(imageViewFeuille.fitWidthProperty().multiply(0.85));
         imageViewPion.fitWidthProperty().bind(imageViewFeuille.fitWidthProperty().multiply(0.78));
         
+        
+        this.primaryStage.widthProperty().addListener((obs, oldWidth, newWidth) -> {
+            double screenWidth = primaryStage.getWidth();
+            primaryStage.setX((screenWidth - newWidth.doubleValue()) / 2);
+        });
+
+        this.primaryStage.heightProperty().addListener((obs, oldHeight, newHeight) -> {
+            double screenHeight = primaryStage.getHeight();
+            primaryStage.setY((screenHeight - newHeight.doubleValue()) / 2);
+        });
     }
 
     public Scene getScene() {
@@ -274,7 +326,31 @@ public class GameController {
         
         return boutonPane;
     }
-    
+    private VBox drawScore() {
+    	VBox scoreBox = new VBox(50);
+    	
+    	for(int i = 1; i < 2; ++i) {
+	    	Label scorePrestige = new Label(String.valueOf(0));
+	    	Label scoreTravail = new Label(String.valueOf(0));
+	    	
+	    	Label total = new Label(String.valueOf(0));
+	    	
+	    	scoreBox.getChildren().addAll(scorePrestige,scoreTravail,total);
+    	}
+    	
+    	
+    	HBox temp = new HBox(20);
+    	
+    	Label scorePion = new Label(String.valueOf(0));
+    	Label scoreQuartier = new Label(String.valueOf(0));
+    	
+    	temp.getChildren().addAll(scorePion,scoreQuartier);
+    	
+    	Label scoreFinal = new Label(String.valueOf(0));
+    	scoreBox.getChildren().addAll(temp,scoreFinal);
+    	
+    	return scoreBox;
+    }
     private StackPane drawToolDe() {
     	VBox temp = new VBox(10);
     	temp.setAlignment(Pos.CENTER);
