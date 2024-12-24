@@ -6,6 +6,7 @@ public class Section {
 	private ArrayList<Batiment> batiments;
 	
 	public Section(Prestige batPrestige,Travail batTravail) {
+		this.batiments = new ArrayList<Batiment>();
 		if(batPrestige != null) {
 			this.batiments.add(batPrestige);
 		}

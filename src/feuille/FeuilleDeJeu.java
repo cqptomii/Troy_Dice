@@ -115,8 +115,33 @@ public class FeuilleDeJeu {
             }
             
             //création des liens entre les batiments d'un quartier
+            if(colorB == 1) {
+	            Lien l1 = new Lien(1,1,0,0,0,quartier.getSection(0).getBatiment(0),quartier.getSection(1).getBatiment(0));
+	            quartier.addLien(l1);
+	            
+	            Lien l2 = new Lien(2,1,0,0,0,quartier.getSection(0).getBatiment(1),quartier.getSection(1).getBatiment(1));
+	            quartier.addLien(l2);
+	            
+	            Lien l3 = new Lien(1,2,0,0,0,quartier.getSection(2).getBatiment(0),quartier.getSection(3).getBatiment(0));
+	            quartier.addLien(l3);
+            
+            }else if (colorB == 2) {
+            	Lien l1 = new Lien(0,0,3,0,0,quartier.getSection(0).getBatiment(1),quartier.getSection(1).getBatiment(1));
+	            quartier.addLien(l1);
+	            
+	            Lien l2 = new Lien(2,2,0,0,0,quartier.getSection(2).getBatiment(1),quartier.getSection(3).getBatiment(1));
+	            quartier.addLien(l2);
+            
+            }else {
+            	Lien l1 = new Lien(0,0,0,3,0,quartier.getSection(2).getBatiment(1),quartier.getSection(3).getBatiment(1));
+	            quartier.addLien(l1);
+	            
+	            Lien l2 = new Lien(2,3,0,0,0,quartier.getSection(4).getBatiment(1),quartier.getSection(5).getBatiment(1));
+	            quartier.addLien(l2);
+            }
             this.quartiers.add(quartier);
-        }
+            
+		}
 
 	}
 	public void protegerSection(int index) {

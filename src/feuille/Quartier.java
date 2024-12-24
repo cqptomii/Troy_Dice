@@ -38,15 +38,10 @@ public class Quartier {
 	protected ArrayList<Section> getSections(){
 		return this.sections;
 	}
-	protected boolean initLien(Batiment bat1,Batiment bat2) {
-		if(bat1 != null) {
-			if(bat2.equals(bat1) == false) {
-				// Créer le lien
-				
-				return true;
-			}
+	protected void addLien(Lien lien) {
+		if(lien != null) {
+			this.liens.add(lien);
 		}
-		return false;
 	}
 	public int getScore() {
 		return this.score;
