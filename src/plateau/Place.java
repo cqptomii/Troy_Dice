@@ -12,7 +12,7 @@ public class Place {
 	/*	Tableau de trois entiers
 	 * 1 - coût Deniers
 	 * 2 - coût connaissance
-	 * 3 - coût influence
+	 * 3 - coût experience
 	*/
 	private int[] prix;
 	private De gainsDe = null;
