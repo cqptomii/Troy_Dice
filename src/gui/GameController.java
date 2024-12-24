@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -11,9 +12,12 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -48,8 +52,11 @@ public class GameController {
 
         HBox uiElements = new HBox(20);
         uiElements.setAlignment(Pos.CENTER);
-
-        // Affichage du plateau
+        
+        //
+        // AFFICHAGE DU PLATEAU
+        //
+        
         Image plateau = new Image(getClass().getResource("/images/1.png").toExternalForm());
         ImageView imageViewPlateau = new ImageView(plateau);
         imageViewPlateau.setPreserveRatio(true);
@@ -95,23 +102,90 @@ public class GameController {
                 plateauGroup.getChildren().add(placeGroup);
             }
         });
-
-        VBox choisirDe = this.drawToolDe();
-
-        Image feuille = new Image(getClass().getResource("/images/feuille.png").toExternalForm());
-        ImageView imageViewFeuille = new ImageView(feuille);
+        
+        //
+        //  AFFICHAGE DE LA BOITE DE CHOISI
+        //
+        
+        StackPane choisirDe = this.drawToolDe();
+        choisirDe.setAlignment(Pos.CENTER);
+        
+        //
+        // AFFICHAGE DE LA FEUILLE DE JEU
+        //
+        
+        Image feuille_vide = new Image(getClass().getResource("/images/feuille_vide.png").toExternalForm());
+        ImageView imageViewFeuille = new ImageView(feuille_vide);
         
         imageViewFeuille.setFitWidth(300);
         imageViewFeuille.setFitHeight(200);
         imageViewFeuille.setPreserveRatio(true);
-
         
-        uiElements.getChildren().addAll(plateauGroup, choisirDe, imageViewFeuille);
+        StackPane feuillePane = new StackPane(imageViewFeuille);
+        
+        VBox feuilleBox = new VBox(0);
+        HBox indexBox1 = this.drawIndexSection();
+        HBox indexBox2 = this.drawIndexSection();
+        HBox indexBox3 = this.drawIndexSection();
+        GridPane bat1 = this.drawBatimentButton();
+        GridPane bat2 = this.drawBatimentButton();
+        GridPane bat3 = this.drawBatimentButton();
+        
+        
+        StackPane quartier1Pane = new StackPane();
+        
+        Image quartier1 = new Image(getClass().getResource("/images/Q1.png").toExternalForm());
+        ImageView imageViewQuartier1 = new ImageView(quartier1);
+        imageViewQuartier1.setPreserveRatio(true);
+        quartier1Pane.getChildren().addAll(imageViewQuartier1,indexBox1,bat1);
+        
+        
+        StackPane quartier2Pane = new StackPane();
+        
+        Image quartier2 = new Image(getClass().getResource("/images/Q2.png").toExternalForm());
+        ImageView imageViewQuartier2 = new ImageView(quartier2);
+        imageViewQuartier2.setPreserveRatio(true);
+        quartier2Pane.getChildren().addAll(imageViewQuartier2,indexBox2,bat2);
+        
+        
+        StackPane quartier3Pane = new StackPane();
+        
+        Image quartier3 = new Image(getClass().getResource("/images/Q3.png").toExternalForm());
+        ImageView imageViewQuartier3 = new ImageView(quartier3);
+        imageViewQuartier3.setPreserveRatio(true);
+        quartier3Pane.getChildren().addAll(imageViewQuartier3,indexBox3,bat3);
+        
+        
+        Image pions = new Image(getClass().getResource("/images/pion.png").toExternalForm());
+        ImageView imageViewPion = new ImageView(pions);
+        imageViewPion.setPreserveRatio(true);
+       
+        feuilleBox.getChildren().addAll(quartier1Pane,quartier2Pane,quartier3Pane,imageViewPion);
+        
+        StackPane.setMargin(indexBox1,new Insets(10,0,0,90));
+        StackPane.setMargin(indexBox2,new Insets(10,0,0,90));
+        StackPane.setMargin(indexBox3,new Insets(10,0,0,90));
+        StackPane.setMargin(bat1,new Insets(35,0,0,80));
+        StackPane.setMargin(bat2,new Insets(35,0,0,80));
+        StackPane.setMargin(bat3,new Insets(35,0,0,80));
+        
+        imageViewFeuille.boundsInLocalProperty().addListener((obs, oldBounds, newBounds) -> {
+            double height = newBounds.getHeight();
+         
+            VBox.setMargin(quartier1Pane, new Insets(height / 3, 0, -7, 30));
+            VBox.setMargin(quartier2Pane, new Insets(0, 0, -7, 30));
+            VBox.setMargin(quartier3Pane, new Insets(0, 0, -5, 30));
+            VBox.setMargin(imageViewPion, new Insets(0, 15, 0, 30));
+        });
+        
+        feuillePane.getChildren().add(feuilleBox);
+        
+        uiElements.getChildren().addAll(plateauGroup, choisirDe, feuillePane);
 
         root.getChildren().add(uiElements);
 
         this.scene = new Scene(root, 1280, 800);
-
+       
         backgroundView.fitWidthProperty().bind(scene.widthProperty());
         backgroundView.fitHeightProperty().bind(scene.heightProperty());
         imageViewPlateau.fitWidthProperty().bind(scene.widthProperty().multiply(0.30));
@@ -122,22 +196,166 @@ public class GameController {
 
         imageViewFeuille.fitWidthProperty().bind(scene.widthProperty().multiply(0.40));
         imageViewFeuille.fitHeightProperty().bind(scene.heightProperty().subtract(20));
+        
+        imageViewQuartier1.fitWidthProperty().bind(imageViewFeuille.fitWidthProperty().multiply(0.85));
+        imageViewQuartier2.fitWidthProperty().bind(imageViewFeuille.fitWidthProperty().multiply(0.85));
+        imageViewQuartier3.fitWidthProperty().bind(imageViewFeuille.fitWidthProperty().multiply(0.85));
+        imageViewPion.fitWidthProperty().bind(imageViewFeuille.fitWidthProperty().multiply(0.78));
+        
     }
 
     public Scene getScene() {
     	return this.scene;
     }
-    private VBox drawToolDe() {
-    	VBox temp = new VBox(5);
-    	De de = this.gameMode.getDeChoisi();
-    	if(de == null) {
-    		Label title = new Label("Aucun dé choisi pour l'instant");
-    		
-    		temp.getChildren().addAll(title);
+    
+    private HBox drawIndexSection() {
+    	HBox indexBox = new HBox(33);
+    	int[] index = this.gameMode.getIndexFeuille();
+    	if(index != null) {
+    		for(int i : index) {
+    			Label sectionLabel = new Label(String.valueOf(i));
+                sectionLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;");
+                
+                sectionLabel.setPrefSize(25, 25);
+                sectionLabel.setAlignment(Pos.CENTER);
+                sectionLabel.setStyle("-fx-border-color: transparent; -fx-background-color: transparent; -fx-font-size: 14px;");
+                
+                // Ajouter le label au HBox
+                indexBox.getChildren().add(sectionLabel);
+    		}
     	}
+    	return indexBox;
+    }
+    private GridPane drawBatimentButton() {
+    	GridPane boutonPane = new GridPane();
+    	boutonPane.setPadding(new Insets(10, 9, 10, 9));
+    	boutonPane.setVgap(5);
+    	boutonPane.setHgap(27);
     	
-    	return temp;
+    	Button btn1 = new Button("1");
+        Button btn2 = new Button("2");
+        Button btn3 = new Button("3");
+        Button btn4 = new Button("4");
+        Button btn5 = new Button("5");
+        Button btn6 = new Button("6");
+        Button btn7 = new Button("7");
+        Button btn8 = new Button("8");
+        Button btn9 = new Button("9");
+        Button btn10 = new Button("10");
+        Button btn11 = new Button("11");
+        Button btn12 = new Button("12");
+        
+        btn1.setPrefSize(30, 30);
+        btn2.setPrefSize(30, 30);
+        btn3.setPrefSize(30, 30);
+        btn4.setPrefSize(30, 30);
+        btn5.setPrefSize(30, 30);
+        btn6.setPrefSize(30, 30);
+        btn7.setPrefSize(30, 30);
+        btn8.setPrefSize(30, 30);
+        btn9.setPrefSize(30, 30);
+        btn10.setPrefSize(30, 30);
+        btn11.setPrefSize(30, 30);
+        btn12.setPrefSize(30, 30);
+        
+        boutonPane.add(btn1, 0, 0);  // Colonne 0, Ligne 0
+        boutonPane.add(btn2, 1, 0);  // Colonne 1, Ligne 0
+        boutonPane.add(btn3, 2, 0);  // Colonne 2, Ligne 0
+        boutonPane.add(btn4, 3, 0);  // Colonne 3, Ligne 0
+        boutonPane.add(btn5, 4, 0);  // Colonne 4, Ligne 0
+        boutonPane.add(btn6, 5, 0);  // Colonne 5, Ligne 0
+        
+        boutonPane.add(btn7, 0, 1);  // Colonne 0, Ligne 1
+        boutonPane.add(btn8, 1, 1);  // Colonne 1, Ligne 1
+        boutonPane.add(btn9, 2, 1);  // Colonne 2, Ligne 1
+        boutonPane.add(btn10, 3, 1); // Colonne 3, Ligne 1
+        boutonPane.add(btn11, 4, 1); // Colonne 4, Ligne 1
+        boutonPane.add(btn12, 5, 1); // Colonne 5, Ligne 1
+        
+        return boutonPane;
+    }
+    
+    private StackPane drawToolDe() {
+    	VBox temp = new VBox(10);
+    	temp.setAlignment(Pos.CENTER);
     	
+    	StackPane stackPane = new StackPane();
+    	
+    	Rectangle backgroundRectangle = new Rectangle();
+        backgroundRectangle.setWidth(200);
+        backgroundRectangle.setHeight(120);
+        backgroundRectangle.setArcWidth(10);
+        backgroundRectangle.setArcHeight(10);
+        backgroundRectangle.setFill(Color.WHITE);
+        backgroundRectangle.setOpacity(0.7);
+
+
+        temp.setStyle("-fx-background-size: cover;" +
+                      "-fx-background-radius: 10;" +
+                      "-fx-padding: 10;" +
+                      "-fx-min-width: 200; -fx-max-width: 200;"); 
+        
+        stackPane.getChildren().add(backgroundRectangle);
+
+        De dechoisi = this.gameMode.getDeChoisi();
+        Label title = new Label("Dé choisi :");
+        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+      
+        if(dechoisi == null) {
+	        Label status = new Label("Aucun dé sélectionné actuellement.");
+	        status.setWrapText(true);
+	        status.setStyle("-fx-font-size: 14px;");
+	
+	
+	        temp.getChildren().addAll(title, status);
+        }else {
+        	
+        	int value = dechoisi.getValeur();
+        	int color = dechoisi.getCouleur();
+        	
+        	Label colorLabel = new Label("Modifier la couleur :");
+        	colorLabel.setWrapText(true);
+        	colorLabel.setStyle("-fx-font-size: 14px;");
+        	HBox colorBox = new HBox(5);
+        	for(int i = 1; i < 4;++i) {
+        		Button colorButton = new Button();
+        		colorButton.setOnAction(event ->{
+            		System.out.println("Couleur");
+            	});
+        		colorBox.getChildren().add(colorButton);
+        	}
+        	Label valueLabel = new Label("Modifier la valeur :");
+        	valueLabel.setWrapText(true);
+        	valueLabel.setStyle("-fx-font-size: 14px;");
+        	
+        	HBox valueBox = new HBox(5);
+        	for(int i = 1; i < 7;++i) {
+        		if(i == value) {
+        			continue;
+        		}
+        		Button valueButton = new Button();
+        		valueButton.setOnAction(event ->{
+            		System.out.println("Valeur");
+            	});
+        		valueBox.getChildren().add(valueButton);
+        	}
+        	
+        	Button valider = new Button("Valider");
+        	Button reset = new Button("Reset");
+        	
+        	
+        	valider.setOnAction(event ->{
+        		System.out.println("Valider");
+        	});
+        	reset.setOnAction(event ->{
+        		System.out.println("Reset");
+        	});
+        	temp.getChildren().addAll(title, colorLabel,colorBox,valueLabel,valueBox,valider,reset);
+        }
+        
+        stackPane.getChildren().add(temp);
+
+        return stackPane;
     }
     private Button drawPlace(Place p, double x, double y) {
         Button placeButton = new Button();
@@ -157,7 +375,6 @@ public class GameController {
 
         return placeButton;
     }
-
     private void updateButtonBackground(Button placeButton, Place p) {
         String imageUrl;
         
