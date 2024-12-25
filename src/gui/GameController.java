@@ -161,13 +161,17 @@ public class GameController {
         GridPane bat2 = this.drawBatimentButton();
         GridPane bat3 = this.drawBatimentButton();
         
+        HBox ectsBox = drawRessource(0);
+        HBox connaissanceBox = drawRessource(1);
+        HBox xpBox = drawRessource(2);
+        
         
         StackPane quartier1Pane = new StackPane();
         
         Image quartier1 = new Image(getClass().getResource("/images/Q1.png").toExternalForm());
         ImageView imageViewQuartier1 = new ImageView(quartier1);
         imageViewQuartier1.setPreserveRatio(true);
-        quartier1Pane.getChildren().addAll(imageViewQuartier1,indexBox1,bat1);
+        quartier1Pane.getChildren().addAll(imageViewQuartier1,indexBox1,bat1,ectsBox);
         
         
         StackPane quartier2Pane = new StackPane();
@@ -175,7 +179,7 @@ public class GameController {
         Image quartier2 = new Image(getClass().getResource("/images/Q2.png").toExternalForm());
         ImageView imageViewQuartier2 = new ImageView(quartier2);
         imageViewQuartier2.setPreserveRatio(true);
-        quartier2Pane.getChildren().addAll(imageViewQuartier2,indexBox2,bat2);
+        quartier2Pane.getChildren().addAll(imageViewQuartier2,indexBox2,bat2,connaissanceBox);
         
         
         StackPane quartier3Pane = new StackPane();
@@ -183,7 +187,7 @@ public class GameController {
         Image quartier3 = new Image(getClass().getResource("/images/Q3.png").toExternalForm());
         ImageView imageViewQuartier3 = new ImageView(quartier3);
         imageViewQuartier3.setPreserveRatio(true);
-        quartier3Pane.getChildren().addAll(imageViewQuartier3,indexBox3,bat3);
+        quartier3Pane.getChildren().addAll(imageViewQuartier3,indexBox3,bat3,xpBox);
         
         
         Image pions = new Image(getClass().getResource("/images/pion.png").toExternalForm());
@@ -208,6 +212,10 @@ public class GameController {
         
         imageViewFeuille.boundsInLocalProperty().addListener((obs, oldBounds, newBounds) -> {
             double height = newBounds.getHeight();
+            
+            StackPane.setMargin(ectsBox,new Insets(height * 0.145,0,0,60));
+            StackPane.setMargin(connaissanceBox,new Insets(height * 0.145,0,0,60));
+            StackPane.setMargin(xpBox,new Insets(height * 0.145,0,0,60));
             StackPane.setMargin(nomJoueur, new Insets(-height/2,0,0,+height*0.05));
             HBox.setMargin(scoreBox, new Insets(height * 0.4, 0,0,-height* 0.06));
             VBox.setMargin(quartier1Pane, new Insets(height / 3, 0, -7, 30));
@@ -447,7 +455,6 @@ public class GameController {
 
         return stackPane;
     }
-     
     private void updatePlateauGroup(Bounds bounds, Group plateauGroup, ImageView imageViewPlateau, Place[] places, int nombreImages) {
         double displayedWidth = bounds.getWidth();
         double displayedHeight = bounds.getHeight();
@@ -500,9 +507,9 @@ public class GameController {
         
         int face = p.getFaceVisible();
         
-        if (face == 1) {
+        if (face == 2) {
             imageUrl = "/images/gris.png";
-        } else if (face == 2) {
+        } else if (face == 0) {
             imageUrl = "/images/orange.png";
         } else {
             imageUrl = "/images/bleu.png";
@@ -523,7 +530,7 @@ public class GameController {
     	ImageView de;
     	
     	try {
-	    	if(color == 0) {
+	    	if(color == -1) {
 	    		String src = "n" + valeur + ".png";
 	    		Image deNoir = new Image(getClass().getResource("/images/" + src).toExternalForm());
 	    		de = new ImageView(deNoir);
@@ -548,6 +555,40 @@ public class GameController {
     	
     }
     
+    private HBox drawRessource(int type){
+    	HBox ressourceBox = new HBox(20);
+    	
+    	Label ressourceLabel = new Label();
+    	ressourceLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+    	String imageUrl;
+    	ImageView imageViewRessource = new ImageView();
+    	
+    	if (type == 0) {
+            imageUrl = "/images/xp.PNG";
+            imageViewRessource.setFitWidth(20);
+            imageViewRessource.setFitHeight(20);
+        } 
+    	else if (type == 1) {
+            imageUrl = "/images/ects1.png";
+            imageViewRessource.setFitWidth(20);
+            imageViewRessource.setFitHeight(20);
+        } 
+    	else {
+            imageUrl = "/images/connaissance.png";
+            imageViewRessource.setFitWidth(15);
+            imageViewRessource.setFitHeight(20);
+        }
+        
+    	ressourceLabel.textProperty().bind(
+    	        this.gameMode.getTourJoueur().ressourceProperty(type).asString("x %d")
+    	);
+    	
+    	Image imageRessource = new Image(getClass().getResource(imageUrl).toExternalForm());
+    	imageViewRessource.setImage(imageRessource);
+    	ressourceBox.getChildren().addAll(imageViewRessource,ressourceLabel);
+    	
+    	return ressourceBox;
+    }
     private StackPane drawFeuille() {
     	return null;
     }
