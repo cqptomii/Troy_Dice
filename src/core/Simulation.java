@@ -139,7 +139,7 @@ public class Simulation {
 		int tempIndex = joueurs.indexOf(tourJoueur.get()) + 1;
 		
 		//retourner la place où il y a le dé noir
-		if(tempIndex >= this.joueurs.size()) {
+		if(tempIndex > this.joueurs.size()) {
 			this.plateauJeu.getPlaceDeNoir().retourner();
 		}
 		
@@ -150,16 +150,19 @@ public class Simulation {
 	public void choixDé(Place place) {
 		if(place != null) {
 			this.prixDeChoisi = place.getPrix();
+			
 			if(this.tourJoueur.get().canUse(0, this.prixDeChoisi[0])) {
+				
 				this.deChoisi.set(place.getDe());
-				if(this.deChoisi.get().getCouleur() == 0) {
+				
+				if(this.deChoisi.get().getCouleur() == -1) {
 					this.deChoisi.set(null);
 					System.out.println("Impossible de choisir le dé noir");
 					return;
 				}
 				//mettre a jour les ressourcces du joueur
-				this.tourJoueur.get().utiliserRessource(1 , this.prixDeChoisi[0]);
-				System.out.println("Choix du dé : " + this.deChoisi);
+				this.tourJoueur.get().utiliserRessource(1 , this.prixDeChoisi[1]);
+				System.out.println("Choix du dé : " + this.deChoisi + "Prix : " + this.prixDeChoisi[1] );
 			}
 		}
 	}
@@ -208,8 +211,8 @@ public class Simulation {
 		}
 	}
 	
-	public void gagnerRessource(int type) {
-		if(this.deChoisi != null) {
+	public void gagnerRessource() {
+		if(this.deChoisi.get() != null) {
 			int valeur = this.deChoisi.get().getValeur(); // montant de la ressource
 			int couleur = this.deChoisi.get().getCouleur(); // type de ressource
 			
