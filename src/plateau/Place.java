@@ -2,9 +2,9 @@ package plateau;
 import java.util.Random;
 public class Place {
 	/* COULEUR DES DEUX FACES
-	 * 1 : gris
-	 * 2 : orange
-	 * 3 : bleu
+	 * 0 : orange
+	 * 1 : bleu
+	 * 2 : gris
 	*/
 	private int faceVisible;
 	private int faceCachée;
@@ -20,8 +20,8 @@ public class Place {
 	public Place() {
 		Random randomEngine = new Random();
 		
-		this.faceVisible = randomEngine.nextInt(1, 4);
-		this.faceCachée = randomEngine.nextInt(1, 4);
+		this.faceVisible = randomEngine.nextInt(0, 3);
+		this.faceCachée = randomEngine.nextInt(0, 3);
 		this.prix = new int[3];
 	}
 	public void placerDé(De valeur) {
@@ -30,7 +30,7 @@ public class Place {
 		
 		if(this.gainsDe == null) {
 			this.gainsDe = valeur;
-			if(this.gainsDe.getCouleur() != 0)
+			if(this.gainsDe.getCouleur() != -1)
 				this.gainsDe.setColorFromPlace(this);
 		}
 	}

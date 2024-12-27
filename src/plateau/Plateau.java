@@ -93,10 +93,25 @@ public class Plateau {
 		return this.places;
 	}
 	public Place getPlaceDeNoir() {
+		for(Place p : this.places) {
+			if(p.getDe().getCouleur() == -1) {
+				return p;
+			}
+		}
 		return null;
 	}
 	public boolean getDemiTour() {
 		return this.demiTour;
+	}
+	public int getAmoutDe(int color) {
+		int amount = 0;
+		for( Place d:this.places) {
+			if(d.getDe().getCouleur() == color) {
+				amount++;
+			}
+		}
+		
+		return amount;
 	}
 	public String toString() {
 		for(int i = 0; i < 9; i++) {

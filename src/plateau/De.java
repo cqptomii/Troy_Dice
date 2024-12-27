@@ -5,10 +5,10 @@ public class De {
 	// valeur du dé : 1 - 6
 	private int valeur;
 	/*
-	 * 0 : dé noir
-	 * 1 : dé gris
-	 * 2 : dé orange
-	 * 3 : dé bleu
+	 * -1 : dé noir
+	 * 0 : dé orange
+	 * 1 : dé bleu
+	 * 2 : dé gris
 	*/
 	private int couleur;
 	
@@ -28,13 +28,13 @@ public class De {
 	public int getValeur() {
 		return this.valeur;		
 	}
-	protected void setValeur(int val) {
+	public void setValeur(int val) {
 		if(val > 0 && val <= 6) {
 			this.valeur = val;
 		}
 	}
-	protected void setCouleur(int couleur) {
-		if(this.couleur >= 0 && this.couleur < 4) {
+	public void setCouleur(int couleur) {
+		if(this.couleur >= -1 && this.couleur < 3) {
 			this.couleur = couleur;
 		}
 	}
