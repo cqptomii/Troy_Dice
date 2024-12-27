@@ -28,6 +28,8 @@ import plateau.Place;
 
 
 import core.*;
+import feuille.FeuilleDeJeu;
+import feuille.Quartier;
 
 public class GameController {
 
@@ -333,29 +335,44 @@ public class GameController {
     }
     private VBox drawScore() {
     	VBox scoreBox = new VBox(50);
+    	FeuilleDeJeu tempFeuille = this.gameMode.getTourJoueur().getFeuille();
     	
     	for(int i = 1; i < 2; ++i) {
-	    	Label scorePrestige = new Label(String.valueOf(0));
+    		Quartier tempQuartier = tempFeuille.getQuartier(i);
+    		
+	    	Label scorePrestige = new Label();
 	    	scorePrestige.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-	    	Label scoreTravail = new Label(String.valueOf(0));
-	    	scoreTravail.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-	    	Label total = new Label(String.valueOf(0));
-	    	total.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-	    	scoreBox.getChildren().addAll(scorePrestige,scoreTravail,total);
+	    	scorePrestige.textProperty().bind(tempQuartier.scorePrestigeProperty().asString("%d"));
+	    	
+	    	Label scoreTravail = new Label();
+	    	scoreTravail.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");    	
+	    	scoreTravail.textProperty().bind(tempQuartier.scoreTravailProperty().asString("%d"));
+	    	
+	    	Label scoreRessource = new Label();
+	    	scoreRessource.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");    	
+	    	scoreRessource.textProperty().bind(tempQuartier.scoreRessourceProperty().asString("%d"));
+	    	
+	    	scoreBox.getChildren().addAll(scorePrestige,scoreTravail,scoreRessource);
     	}
     	
     	
-    	HBox temp = new HBox(20);
+    	HBox temp1 = new HBox(20);
     	
-    	Label scorePion = new Label(String.valueOf(0));
+    	Label scorePion = new Label();
     	scorePion.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-    	Label scoreQuartier = new Label(String.valueOf(0));
+    	scorePion.textProperty().bind(tempFeuille.scoreHabitantProperty().asString("%d"));
+    	
+    	Label scoreQuartier = new Label();
     	scoreQuartier.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-    	temp.getChildren().addAll(scorePion,scoreQuartier);
+    	scoreQuartier.textProperty().bind(tempFeuille.scoreFeuilleProperty().asString("%d"));
+    	
+    	temp1.getChildren().addAll(scorePion,scoreQuartier);
     	
     	Label scoreFinal = new Label(String.valueOf(0));
     	scoreFinal.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-    	scoreBox.getChildren().addAll(temp,scoreFinal);
+    	scoreFinal.textProperty().bind(this.gameMode.getTourJoueur().scoreProperty().asString("%d"));
+    	
+    	scoreBox.getChildren().addAll(temp1,scoreFinal);
     	
     	return scoreBox;
     }
@@ -397,24 +414,33 @@ public class GameController {
             modificationContainer.getChildren().clear();
             modificationContainer.getChildren().add(title);
             modificationContainer.getChildren().add(status);
+            
             if (newDe == null) {
                 status.setText("Aucun dé sélectionné actuellement.");
             } else {
-                int value = newDe.getValeur();
-                int color = newDe.getCouleur();
+            
+            	int initialValue = newDe.getValeur();
+                int initialColor = newDe.getCouleur();
 
-                status.setText(String.format("Dé sélectionné : Valeur = %d, Couleur = %d", value, color));
-
+                final int[] tempColor = {initialColor};
+                final int[] tempValue = {initialValue};
+                
+                status.setText(String.format("Dé sélectionné : Valeur = %d, Couleur = %d", tempValue[0],tempColor[0]));
+            
+                
                 // Section pour modifier la couleur
                 Label colorLabel = new Label("Modifier la couleur :");
                 colorLabel.setStyle("-fx-font-size: 14px;");
                 HBox colorBox = new HBox(5);
                 colorBox.setAlignment(Pos.CENTER);
+                
                 for (int i = 1; i <= 3; ++i) {
-                    if (i != color) {
+                    if (i != initialColor) {
                         Button colorButton = new Button("Couleur " + i);
+                        final int currentColor = i;
                         colorButton.setOnAction(event -> {
-                            System.out.println("Couleur modifiée : ");
+                        	tempColor[0] = currentColor;
+                            System.out.println("Couleur modifiée : " + currentColor);
                             // Logique pour modifier la couleur du dé
                         });
                         colorBox.getChildren().add(colorButton);
@@ -426,11 +452,14 @@ public class GameController {
                 valueLabel.setStyle("-fx-font-size: 14px;");
                 HBox valueBox = new HBox(5);
                 valueBox.setAlignment(Pos.CENTER);
+                
                 for (int i = 1; i <= 6; ++i) {
-                    if (i != value) {
+                    if (i != initialValue) {
                         Button valueButton = new Button(String.valueOf(i));
+                        final int currentValue = i;
                         valueButton.setOnAction(event -> {
-                            System.out.println("Valeur modifiée : ");
+                        	tempValue[0] = currentValue;
+                            System.out.println("Valeur modifiée : " + currentValue);
                         });
                         valueBox.getChildren().add(valueButton);
                     }
@@ -438,11 +467,19 @@ public class GameController {
 
                 Button valider = new Button("Valider");
                 valider.setOnAction(event -> {
+                	if(initialColor != tempColor[0]) {
+                		this.gameMode.modifierCouleurDe(tempColor[0]);
+                	}
+                	if(initialValue != tempValue[0]) {
+                		this.gameMode.modifierValeurDe(tempValue[0]);
+                	}
                     System.out.println("Modifications validées.");
                 });
 
                 Button reset = new Button("Reset");
                 reset.setOnAction(event -> {
+                	tempColor[0] = initialColor;
+                	tempValue[0]  = initialValue;
                     System.out.println("Modifications réinitialisées.");
                 });
 
