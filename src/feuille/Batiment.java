@@ -37,7 +37,7 @@ public abstract class Batiment {
 		this.colorBatiment = colorB;
 	}
 	
-	public abstract void construire();
+	public abstract void construire(int nbDe);
 	
 	public void invaliderBatiment() {
 		if(currSection != null) {
@@ -54,6 +54,11 @@ public abstract class Batiment {
 			this.bonusLien = lien;
 		}
 	}
+	
+	public Lien getBonusLien() {
+		return this.bonusLien;
+	}
+	
 	public void setCurrSection(Section section) {
 		if(this.currSection == null ) {
 			this.currSection = section;
@@ -70,6 +75,12 @@ public abstract class Batiment {
 			return true;
 		}
 		return false;
+	}
+	public int getColorHabitant() {
+		return this.colorHabitant;
+	}
+	public int getAmountHabitant() {
+		return this.habitant;
 	}
 	public String toString() {
 		String temp = new String("Batiment :" + this.name + " , Habitant : " + this.habitant);

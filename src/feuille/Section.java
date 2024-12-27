@@ -33,7 +33,7 @@ public class Section {
 	public int getIndex() {
 		return this.index;
 	}
-	protected Batiment getBatiment(int index) {
+	public Batiment getBatiment(int index) {
 		return this.batiments.get(index);
 	}
 }

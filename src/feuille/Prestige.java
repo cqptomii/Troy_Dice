@@ -13,29 +13,36 @@ public class Prestige extends Batiment {
 	 * 3 - gain experience
 	*/
 	private int [] recompenseBonus;
+	private int colorDeMult;
+	
 	private boolean multiplicateur;
 	private int indexMult;
-	public Prestige(FeuilleDeJeu parent,String name, int nombreHabitants,int colorH,int bonus,int [] recompense,boolean multiplicateur,int indexMult,int colorB) {
+	
+	public Prestige(FeuilleDeJeu parent,String name, int nombreHabitants,int colorH,int bonus,int [] recompense,int colorDe,boolean multiplicateur,int indexMult,int colorB) {
 		super(parent,name, nombreHabitants,colorH,colorB);
 		if(bonus >=1 && bonus <=3)
 			this.bonus = bonus;
 		this.recompenseBonus = recompense;
 		this.multiplicateur = multiplicateur;
 		this.indexMult = indexMult;
+		this.colorDeMult = colorDe;
 	}
-
+	
 	@Override
-	public void construire() {
+	public void construire(int nbDe) {
 		//construire le batiment
 		this.etat =1;
 		
 		//Appliquer l'effet spécial du batiment
 		if(bonus == 1 ) {
 			this.currFeuille.protegerSection(this.currSection.getIndex());
-		}else if(bonus == 2) {
-			int amount = this.currFeuille.getBatimentConstruit(true,this.colorBatiment);
+		}else if(bonus == 2) { 
+			//Mettre à jour le montant des récompense bonus du batiment
+			for(int i =0; i < this.recompenseBonus.length; ++i) {
+				this.recompenseBonus[i] *= nbDe;
+			}
+			this.habitant *= nbDe;
 			
-			//Ajouter les ressources au joueur
 		}else {
 			//Mettre à jour le multiplicateur de batiments
 			this.currFeuille.addMult();
@@ -45,18 +52,13 @@ public class Prestige extends Batiment {
 				this.currFeuille.getQuartier(this.indexMult).addMultTravail();
 		
 		}
-		
-		//verifier l'état des eventuels liens
-		if(this.bonusLien != null) {
-			if(this.bonusLien.lienEtablis()) {
-				int[] value = this.bonusLien.getRecompense();
-				
-				//Mettre à jour les ressources du joueurs
-				
-			}
-		}
 	}
-
+	public int[] getRecompenseBonus() {
+		return this.recompenseBonus;
+	}
+	public int getColorDe() {
+		return this.colorDeMult;
+	}
 	public String toString() {
 		String temp = new String(super.toString() + "Bonus : " + this.bonus);
 		System.out.println(temp);

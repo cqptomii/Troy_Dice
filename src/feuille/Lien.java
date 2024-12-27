@@ -41,8 +41,19 @@ public class Lien {
 		}
 		return etat;
 	}
-	protected int[] getRecompense() {
-		return this.recompense;
+	public int[] getRecompense() {
+		if(this.lienEtablis())
+			return this.recompense;
+		
+		return null;
+	}
+	public int getHabitant() {
+		if(this.lienEtablis())
+			return this.habitants;
+		return 0;
+	}
+	public int getColorHabitant() {
+		return this.colorH;
 	}
 	
 }

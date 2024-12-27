@@ -1,6 +1,8 @@
 package feuille;
 import java.util.ArrayList;
 import core.Joueur;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 public class FeuilleDeJeu {
 	
 	private ArrayList<Quartier> quartiers;
@@ -8,7 +10,12 @@ public class FeuilleDeJeu {
 	private Joueur owner;
 	private int multOwned;
 	
+	private IntegerProperty scoreHabitant;
+	private IntegerProperty scoreFeuille;
+	
 	public FeuilleDeJeu(int [] indexSections,Joueur j) {
+		this.scoreHabitant = new SimpleIntegerProperty(0);
+		this.scoreFeuille = new SimpleIntegerProperty(0);
 		this.indexSections = indexSections;
 		this.owner = j;
 		this.quartiers = new ArrayList<Quartier>();
@@ -16,17 +23,21 @@ public class FeuilleDeJeu {
 		initQuartiers();
 	}
 	private void initQuartiers() {
-		for (int colorB = 1; colorB < 4; colorB++) {
+		for (int colorB = 0; colorB < 3; colorB++) {
 			
-            Quartier quartier = new Quartier(colorB); // 1= orange , 2 = bleu, 3 = gris
-            
+            Quartier quartier = new Quartier(colorB,this); // 0= orange , 1 = bleu, 2 = gris
             for (int sec = 1; sec < 7; sec++) {
                 int bonusId = colorB;
                 int colorH = colorB;
                 int amountHab = 0;
                 boolean multType = false;
             	int indexMult = 1;
-            	int[] ressource = null;
+            	int[] ressource = new int[3];
+            	int colorDe = 0;
+            	ressource[0] = 0;
+            	ressource[1] = 0;
+            	ressource[2] = 0;
+            	
                 // Créer les bâtiments de prestige et de travail pour chaque section
             	if(colorB ==1) {
             		amountHab = 1;
@@ -42,7 +53,6 @@ public class FeuilleDeJeu {
             		switch(sec) {
             		case 1:
             			amountHab = 0;
-            			ressource = new int[3];
             			
             			ressource[0] = 0;
             			ressource[1] = 0;
@@ -53,25 +63,27 @@ public class FeuilleDeJeu {
             			break;
             		case 3:
             			amountHab = 0;
-            			ressource = new int[3];
             			
             			ressource[0] = 3;
             			ressource[1] = 0;
             			ressource[2] = 0;
+            			colorDe = 1;
             			break;
             		case 4:
             			amountHab = 2;
+            			colorDe = 1;
             			break;
             		case 5:
             			amountHab = 0;
-            			ressource = new int[3];
             			
             			ressource[0] = 0;
             			ressource[1] = 3;
             			ressource[2] = 0;
+            			colorDe = 2;
             			break;
             		case 6:
-            			amountHab = 6;
+            			amountHab = 2;
+            			colorDe = 2;
             			break;
             		}
             	}else {
@@ -103,7 +115,7 @@ public class FeuilleDeJeu {
             		}
             	}
             	
-            	Prestige prestige = new Prestige(this, "Prestige " + sec, amountHab,colorH,bonusId,ressource,multType,indexMult,colorB);
+            	Prestige prestige = new Prestige(this, "Prestige " + sec, amountHab,colorH,bonusId,ressource,colorDe,multType,indexMult,colorB);
                 Travail travail = new Travail(this, "Travail " + sec, 2,colorH,colorB);
 
                 // Créer la section
@@ -159,37 +171,31 @@ public class FeuilleDeJeu {
 		Section s = q.getSection(index);
 		s.detruireSection();
 	}
-	public int getBatimentConstruit(boolean prestige,int colorQuartier) {
-		int amount = 0;
-		Quartier q = this.quartiers.get(colorQuartier);
-		int index = 0;
-		
-		if(prestige) {
-			index = 0;
-		}else {
-			index = 1;
-		}
-		for(Section s : q.getSections()) {
-			if(s.getBatiment(index).etat == 1) {
-				amount++;
-			}
-		}
-		return amount;
-	}
-	
 	
 	public int computeScore() {
 		if(quartiers.size() == 0) {
 			return 0;
 		}
-		int feuilleScore = 0;
+		scoreFeuille.set(0);
 		for(Quartier q : this.quartiers) {
-			feuilleScore += q.getScore();
+			scoreFeuille.set(scoreFeuille.get() + q.getScore());
 		}
-		return feuilleScore;
+		
+		scoreHabitant.set(0);
+		for(int i = 0; i < 3; ++i) {
+			scoreHabitant.set(scoreHabitant.get() + this.owner.getHabitant(i));
+		}
+		
+		return scoreFeuille.get() + scoreHabitant.get();
 	}
 	
-	protected int getMultOwned() {
+	public IntegerProperty scoreFeuilleProperty(){
+		return this.scoreFeuille;
+	}
+	public IntegerProperty scoreHabitantProperty() {
+		return this.scoreHabitant;
+	}
+	public int getMultOwned() {
 		if(this.multOwned == 0) {
 			return 0;
 		}
@@ -204,7 +210,10 @@ public class FeuilleDeJeu {
 	protected void addMult() {
 		this.multOwned+=1;
 	}
-	protected Quartier getQuartier(int color) {
+	public Quartier getQuartier(int color) {
 		return this.quartiers.get(color);
+	}
+	public Joueur getJoueur() {
+		return this.owner;
 	}
 }

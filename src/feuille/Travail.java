@@ -8,18 +8,8 @@ public class Travail extends Batiment{
 	}
 
 	@Override
-	public void construire() {
+	public void construire(int nbDe) {
 		//construire le batiment
 		this.etat = 1;
-		
-		//verifier l'état des eventuels liens
-		if(this.bonusLien != null) {
-			if(this.bonusLien.lienEtablis()) {
-				int[] value = this.bonusLien.getRecompense();
-						
-				//Mettre à jour les ressources du joueurs
-						
-			}
-		}
 	}
 }
