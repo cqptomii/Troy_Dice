@@ -336,7 +336,7 @@ public class GameController {
     private VBox drawScore() {
     	VBox scoreBox = new VBox(50);
     	FeuilleDeJeu tempFeuille = this.gameMode.getTourJoueur().getFeuille();
-    	
+    	int scoreMultiplicateur = tempFeuille.getMultOwned();
     	for(int i = 1; i < 2; ++i) {
     		Quartier tempQuartier = tempFeuille.getQuartier(i);
     		
