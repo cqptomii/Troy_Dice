@@ -8,7 +8,7 @@ public class FeuilleDeJeu {
 	private ArrayList<Quartier> quartiers;
 	private int[] indexSections;
 	private Joueur owner;
-	private int multOwned;
+	private IntegerProperty multOwned;
 	
 	private IntegerProperty scoreHabitant;
 	private IntegerProperty scoreFeuille;
@@ -19,7 +19,7 @@ public class FeuilleDeJeu {
 		this.indexSections = indexSections;
 		this.owner = j;
 		this.quartiers = new ArrayList<Quartier>();
-		this.multOwned = 0;
+		this.multOwned = new SimpleIntegerProperty(0);
 		initQuartiers();
 	}
 	private void initQuartiers() {
@@ -196,19 +196,22 @@ public class FeuilleDeJeu {
 		return this.scoreHabitant;
 	}
 	public int getMultOwned() {
-		if(this.multOwned == 0) {
+		if(this.multOwned.get() == 0) {
 			return 0;
 		}
-		else if(this.multOwned <= 2) {
+		else if(this.multOwned.get() <= 2) {
 			return 1;
-		}else if(this.multOwned >2 && this.multOwned <= 4) {
+		}else if(this.multOwned.get() >2 && this.multOwned.get() <= 4) {
 			return 2;
 		}else {
 			return 3;
 		}
 	}
 	protected void addMult() {
-		this.multOwned+=1;
+		this.multOwned.set(multOwned.get()+1);
+	}
+	public IntegerProperty multOwnedProperty() {
+		return this.multOwned;
 	}
 	public Quartier getQuartier(int color) {
 		return this.quartiers.get(color);

@@ -1,8 +1,12 @@
 package plateau;
 import java.util.Arrays;
+
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 import java.util.ArrayList;
 public class Plateau {
-	private boolean demiTour;
+	private BooleanProperty demiTour;
 	
 	private int[] indexPlace;
 	
@@ -13,7 +17,7 @@ public class Plateau {
 	public Plateau() {
 		this.places = new Place[9];
 		this.indexPlace = new int[9];
-		this.demiTour = false ;
+		this.demiTour = new SimpleBooleanProperty(false) ;
 		
 		this.listePrixPlace = new ArrayList<Integer[]>();
 		this.initListePrix();
@@ -30,12 +34,12 @@ public class Plateau {
 							{0,0,0},
 							{0,0,0},
 							{1,1,1},
-							{1,0,0},
-							{2,0,0},
+							{0,1,0},
+							{0,2,0},
 							{0,0,0},
 							{1,1,1},
-							{1,0,0},
-							{2,0,0}
+							{0,1,0},
+							{0,2,0}
 					};
 		for(int i = 0; i < tempTab.length; ++i) {
 			this.listePrixPlace.addLast(tempTab[i]);
@@ -69,7 +73,7 @@ public class Plateau {
 						index = i;
 					}
 				}
-				if(this.demiTour) { // seconde parties de tour
+				if(this.demiTour.get()) { // seconde parties de tour
 					index += 5;
 				}else { // première partie de tour
 					index++;
@@ -86,14 +90,22 @@ public class Plateau {
 	        System.err.println("Erreur : Une référence null a été rencontrée lors du placement des dés : " + e.getMessage());
 	    }
 	}
+	public void supprimerDés() {
+		for(Place p : this.places) {
+			p.supprimerDé();
+		}
+	}
 	public void setDemiTour(boolean valeur) {
-		this.demiTour = valeur;
+		this.demiTour.set(valeur);
 	}
 	public Place[] getPlace() {
 		return this.places;
 	}
 	public Place getPlaceDeNoir() {
 		for(Place p : this.places) {
+			if(p.getDe() == null ){
+				continue;
+			}
 			if(p.getDe().getCouleur() == -1) {
 				return p;
 			}
@@ -101,6 +113,9 @@ public class Plateau {
 		return null;
 	}
 	public boolean getDemiTour() {
+		return this.demiTour.get();
+	}
+	public BooleanProperty demiTourProperty() {
 		return this.demiTour;
 	}
 	public int getAmoutDe(int color) {

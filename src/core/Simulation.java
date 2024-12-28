@@ -23,11 +23,13 @@ public class Simulation {
 	private int[] prixDeChoisi;
 	private final IntegerProperty tour;
 	private final ObjectProperty<De> deChoisi;
+	private De storedDeChoisi;
 	private final ObjectProperty<Joueur> tourJoueur;
 	
 	public Simulation() {		
 		this.tour = new SimpleIntegerProperty(1);
 		this.deChoisi = new SimpleObjectProperty<>(null);
+		this.storedDeChoisi = null;
 		this.tourJoueur = new SimpleObjectProperty<>(null);
 		this.modeJeu = 0;
 		this.nombreJoueurs = 0;
@@ -113,15 +115,24 @@ public class Simulation {
 	
 	public void lancementDemiTour() {
 		boolean state = this.plateauJeu.getDemiTour();
+		// Mise à jour du tour et du demi-tour
 		if(state) {
 			  this.plateauJeu.setDemiTour(false);
 			  this.tour.set(this.tour.get() + 1);
 		}else {
 			this.plateauJeu.setDemiTour(true);
 		}
+		
+		//Mise à jour du joueur
+		
 		this.tourJoueur.set(this.joueurs.getFirst());
+		
+		//Mise à jour du plateau
+		
+		this.plateauJeu.supprimerDés();
 		this.plateauJeu.placerDés(this.crieur.lancerDes());
 		
+		//Mise à jour de la feuille de jeu en fonction du dé noir
 		if(this.tour.get() >= 3) {
 			Place temp = this.plateauJeu.getPlaceDeNoir();
 			
@@ -135,26 +146,38 @@ public class Simulation {
 	}
 	
 	public void changementJoueur(){
+		if(this.storedDeChoisi != null) {
+			this.getDeChoisi().setCouleur(storedDeChoisi.getCouleur());
+			this.getDeChoisi().setValeur(storedDeChoisi.getValeur());
+			this.storedDeChoisi = null;
+		}
 		this.deChoisi.set(null);
+		
 		int tempIndex = joueurs.indexOf(tourJoueur.get()) + 1;
+		System.out.println("Changement de joueur : " + (tempIndex-1) + "-> " + tempIndex + "Taille initial : " + joueurs.size());
 		
 		//retourner la place où il y a le dé noir
-		if(tempIndex > this.joueurs.size()) {
+		if(tempIndex >= this.joueurs.size()) {
 			this.plateauJeu.getPlaceDeNoir().retourner();
+			System.out.println("On tourne la place Puis on lance un autre tour ");
+			this.lancementDemiTour();
 		}
 		
 		int currentPlayerIndex = ( tempIndex% joueurs.size());
 		tourJoueur.set(this.joueurs.get(currentPlayerIndex));
 		tourJoueur.get().updateScore();
+		
 	}
 	public void choixDé(Place place) {
 		if(place != null) {
-			this.prixDeChoisi = place.getPrix();
 			
-			if(this.tourJoueur.get().canUse(0, this.prixDeChoisi[0])) {
+			this.prixDeChoisi = place.getPrix();
+			if(this.tourJoueur.get().canUse(0, this.prixDeChoisi[1])) {
 				
 				this.deChoisi.set(place.getDe());
-				
+				if(deChoisi.get() == null) {
+					return;
+				}
 				if(this.deChoisi.get().getCouleur() == -1) {
 					this.deChoisi.set(null);
 					System.out.println("Impossible de choisir le dé noir");
@@ -183,6 +206,9 @@ public class Simulation {
 			
 			if(couleur != couleurDe) {
 				if(this.getTourJoueur().canUse(2,2)) {
+					if(storedDeChoisi == null)
+						this.storedDeChoisi = this.getDeChoisi();
+					
 					this.getTourJoueur().utiliserRessource(2, 2);
 					this.getDeChoisi().setCouleur(couleur);
 				}
@@ -201,6 +227,9 @@ public class Simulation {
 			if(valeur != valeurDe) {
 				int difference = Math.abs(valeur- valeurDe);
 				if(this.getTourJoueur().canUse(0, difference)) {
+					if(storedDeChoisi == null)
+						this.storedDeChoisi = this.getDeChoisi();
+					
 					this.getTourJoueur().utiliserRessource(0, difference);
 					this.getDeChoisi().setValeur(valeur);
 					return true;
@@ -218,13 +247,19 @@ public class Simulation {
 			
 			//Mise à jour des ressources du joueur actuel
 			this.getTourJoueur().ajouterRessource(couleur,valeur);
-			
+			System.out.println("Gain de ressource " );
 			//Changement de joueur
 			this.changementJoueur();
 		}
 	}
-	
+	public Lien getLien(int idQuartier, int idSection, boolean prestige) {
+		int batIndex = prestige ? 0 : 1;
+		return this.getTourJoueur().getFeuille().getQuartier(idQuartier).getSection(idSection).getBatiment(batIndex).getBonusLien();
+	}
 	public boolean construireBatiment(int idQuartier, int idSection, boolean prestige) {
+		if(this.deChoisi.get() == null) {
+			return false;
+		}
 	    int color = this.deChoisi.get().getCouleur(); // couleur du dé
 	    int value = this.deChoisi.get().getValeur(); // valeur du dé
 
@@ -272,7 +307,7 @@ public class Simulation {
 	        	int amount = temp.getHabitant();
 	        	this.getTourJoueur().ajouterHabitant(colorH, amount);
 	        }
-
+	        System.out.println("Le Batiment a été construit" );
 	        // Passer au joueur suivant
 	        this.changementJoueur();
 
