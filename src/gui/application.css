@@ -28,3 +28,7 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
+.quartier-box {
+    -fx-padding: 10%; /* Marges dynamiques */
+    -fx-spacing: 5%;  /* Espacement dynamique */
+}
