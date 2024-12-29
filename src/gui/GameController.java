@@ -605,7 +605,6 @@ public class GameController {
             //Récupération de l'image à afficher
             int state = this.gameMode.getTourJoueur().getFeuille().getQuartier(color).getSection(i).getBatiment(0).getEtat();
             String imageUrl = this.loadBatimentImage(state, true, color, i+1);
-            System.out.println(imageUrl);
             batPrestige.setStyle("-fx-background-image: url('" + getClass().getResource(imageUrl).toExternalForm() + "');" +
                                  "-fx-background-size: cover;");
             batPrestige.setPrefWidth(69.1);
@@ -648,7 +647,6 @@ public class GameController {
     	if(state) {
     		imageUrl += "P";
     	}
-    	
     	imageUrl += color+".png";
     	
     	Image imageIndex = new Image(getClass().getResource(imageUrl).toExternalForm());

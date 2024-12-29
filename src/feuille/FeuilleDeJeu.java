@@ -121,12 +121,15 @@ public class FeuilleDeJeu {
             	}
             	
             	Prestige prestige = new Prestige(this, "Prestige " + sec, amountHab,colorH,bonusId,ressource,colorDe,multType,indexMult,colorB);
-                Travail travail = new Travail(this, "Travail " + sec, 2,colorH,colorB);
+            	Travail travail = new Travail(this, "Travail " + sec, 2,colorH,colorB);
 
                 // Créer la section
                 Section section = new Section(prestige, travail);
-                section.setIndex(sec);
-
+                section.setIndex(sec-1);
+                	
+                prestige.setCurrSection(section);
+                travail.setCurrSection(section);
+                
                 // Ajouter la section au quartier
                 quartier.addSection(section);
             }

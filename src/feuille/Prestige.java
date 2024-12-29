@@ -34,9 +34,9 @@ public class Prestige extends Batiment {
 		this.etat =1;
 		
 		//Appliquer l'effet spécial du batiment
-		if(bonus == 1 ) {
+		if(bonus == 0 ) {
 			this.currFeuille.protegerSection(this.currSection.getIndex());
-		}else if(bonus == 2) { 
+		}else if(bonus == 1) { 
 			//Mettre à jour le montant des récompense bonus du batiment
 			for(int i =0; i < this.recompenseBonus.length; ++i) {
 				this.recompenseBonus[i] *= nbDe;
