@@ -118,6 +118,7 @@ public class Simulation {
 		// Mise à jour du tour et du demi-tour
 		if(state) {
 			  this.plateauJeu.setDemiTour(false);
+			  this.plateauJeu.updatePlaceValue();
 			  this.tour.set(this.tour.get() + 1);
 		}else {
 			this.plateauJeu.setDemiTour(true);
