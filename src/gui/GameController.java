@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.application.Platform;
 import javafx.beans.binding.StringExpression;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.DoubleProperty;
@@ -89,6 +90,8 @@ public class GameController {
 	    topLeftContainer.setPadding(new Insets(10, 0, 0, 10));
         
         root.getChildren().add(topLeftContainer);
+        
+        
         //
         // AFFICHAGE DU PLATEAU
         //
@@ -97,16 +100,24 @@ public class GameController {
         imageViewPlateau.setPreserveRatio(true);
           
         this.gameMode.tourProperty().addListener((obs, oldTour, newTour) -> {
-            if (newTour != null) {
-                String imagePath = "/images/" + newTour.intValue() + ".png";
-                Image temp = new Image(getClass().getResource(imagePath).toExternalForm());
+        	Platform.runLater(() -> {
+                System.out.println(newTour.intValue() + " tour ");
+                String imagePath = getClass().getResource("/images/" + newTour.intValue() + ".png").toExternalForm();
+           
+                if (imagePath == null) {
+                    System.err.println("Image introuvable : " + imagePath);
+                    return;
+                }
+                Image temp = new Image(imagePath);
                 imageViewPlateau.setImage(temp);
-            }
+                
+                imageViewPlateau.getParent().layout();
+            });
         });
+        
         //Affichage des places et des dés
         Group plateauGroup = new Group();
-        plateauGroup.getChildren().add(imageViewPlateau);
-
+        
         Place[] places = this.gameMode.getPlateau().getPlace();
         
         int nombreImages = 9;
@@ -120,17 +131,13 @@ public class GameController {
                 updatePlateauGroup(newBounds, plateauGroup, imageViewPlateau, places, nombreImages);
             }
         });
-        
-        this.gameMode.tourProperty().addListener((obs, oldTour, newTour) -> {
-            if (newTour != null) {
-                // Force le recalcul des dés et des places
-                Bounds bounds = imageViewPlateau.getBoundsInParent();
-                if (bounds != null) {
-                    updatePlateauGroup(bounds, plateauGroup, imageViewPlateau, places, nombreImages);
-                }
-            }
+        this.gameMode.getPlateau().demiTourProperty().addListener((obs, oldPlayer, newPlayer) -> {
+        	Platform.runLater(() -> {
+                Bounds plateauBounds = imageViewPlateau.getLayoutBounds();
+                updatePlateauGroup(plateauBounds, plateauGroup, imageViewPlateau, places, nombreImages);
+            });
         });
-        
+        plateauGroup.getChildren().add(imageViewPlateau); 
         
         //
         //  AFFICHAGE DE LA BOITE DE CHOIW DE Dé
@@ -156,27 +163,35 @@ public class GameController {
         //Affichage du nom du joueur 
         Label nomJoueur = new Label(this.gameMode.getTourJoueur().getName());
         nomJoueur.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-
-        this.gameMode.tourJoueurProperty().addListener((obs, oldJoueur, newJoueur) -> {
-            if (newJoueur != null) {
-                nomJoueur.setText(newJoueur.getName());
-            } else {
-                nomJoueur.setText("Aucun joueur");
-            }
-        });
-        System.out.println("Nom du joueur : " + this.gameMode.getTourJoueur().getName());
-        
         
         feuillePane.getChildren().add(nomJoueur);
-                
-        HBox quartierBox1 = this.drawQuartier(0);
-        HBox quartierBox2 = this.drawQuartier(1);
-        HBox quartierBox3 = this.drawQuartier(2);
         
-        HBox pionBox = drawPionBox(imageViewFeuille);
+        VBox feuilleBox = this.drawFeuille(imageViewFeuille);
         
-        VBox feuilleBox = new VBox(-70,quartierBox1,quartierBox2,quartierBox3,pionBox);
-        feuilleBox.setPadding(new Insets(30,0,0,0));
+        this.gameMode.tourJoueurProperty().addListener((obs, oldJoueur, newJoueur) -> {
+        	Platform.runLater(() -> {
+	            System.out.println("Changement de joueur : ancien = " + (oldJoueur != null ? oldJoueur.getName() : "null")
+	                + ", nouveau = " + (newJoueur != null ? newJoueur.getName() : "null"));
+	
+	            if (newJoueur != null) {
+	            	// Modification nom de joueur
+	                nomJoueur.setText(newJoueur.getName());
+	                
+	                // Rafraichissment de la feuille de jeu 
+	                VBox newFeuilleBox = this.drawFeuille(imageViewFeuille);
+	                feuillePane.getChildren().setAll(imageViewFeuille, newFeuilleBox,nomJoueur);
+	                
+	                // Placement des box dans la fenêtre
+	                
+	                Bounds  newBounds = imageViewFeuille.getLayoutBounds();
+	                double height = newBounds.getHeight();
+	                
+	                StackPane.setMargin(newFeuilleBox, new Insets(height /6 + 20,0,0,20));
+	            } else {
+	                nomJoueur.setText("Aucun joueur");
+	            }
+        	});
+        });
         
 	    feuillePane.getChildren().add(feuilleBox);
 	    
@@ -187,9 +202,11 @@ public class GameController {
         
         this.scene = new Scene(root, 720*2, 576*2);
         
-        DoubleProperty quartierMargin = new SimpleDoubleProperty();
-        quartierMargin.bind(scene.widthProperty().multiply(0.01));
-
+        
+        //
+        //	Mise à jour dynamique
+        //
+        
         imageViewFeuille.boundsInLocalProperty().addListener((obs, oldBounds, newBounds) -> {
             double height = newBounds.getHeight();
             
@@ -280,7 +297,10 @@ public class GameController {
 
                 final int[] tempColor = {initialColor};
                 final int[] tempValue = {initialValue};
-                
+                if(tempColor[0] == -1) {
+                	System.out.println("Dé noir");
+                	return;
+                }
                 status.setText(String.format("Dé sélectionné : Valeur = %d, Couleur = %s", tempValue[0],colorArray[tempColor[0]]));
             
                 
@@ -368,10 +388,13 @@ public class GameController {
             Group placeGroup = new Group();
 
             Button place = this.drawPlace(p, imageX, imageY);
-            ImageView de = this.drawDe(p, imageX, imageY);
-
-            if (place != null) placeGroup.getChildren().add(place);
-            if (de != null) placeGroup.getChildren().add(de);
+            ImageView de = this.drawDe(p.getDe(), imageX, imageY);
+            if (place != null) {
+                placeGroup.getChildren().add(place);
+            }
+            if (de != null) {
+                placeGroup.getChildren().add(de);
+            }
 
             plateauGroup.getChildren().add(placeGroup);
         }
@@ -387,7 +410,7 @@ public class GameController {
         
         placeButton.setLayoutX(x);
         placeButton.setLayoutY(y);
-
+        	
         placeButton.setOnAction(e -> {
         	if(this.gameMode.getDeChoisi() == null) {
         		this.gameMode.choixDé(p);
@@ -408,47 +431,57 @@ public class GameController {
         } else {
             imageUrl = "/images/bleu.png";
         }
-        
         placeButton.setStyle("-fx-background-image: url('" + getClass().getResource(imageUrl).toExternalForm() + "');" +
                              "-fx-background-size: cover;" + 
                              "-fx-background-radius: 50;" +
                              "-fx-min-width: 100;" + 
                              "-fx-min-height: 100;");
     }
-    private ImageView drawDe(Place p,double x,double y) {
-    	if(p.getDe() == null) {
-    		return null;
-    	}
-    	int color = p.getDe().getCouleur();
-    	int valeur = p.getDe().getValeur();
-    	ImageView de;
-    	
-    	try {
-	    	if(color == -1) {
-	    		String src = "n" + valeur + ".png";
-	    		Image deNoir = new Image(getClass().getResource("/images/" + src).toExternalForm());
-	    		de = new ImageView(deNoir);
-	    	}else {
-	    		String src = "t" + valeur + ".png";
-	    		Image deTransparent = new Image(getClass().getResource("/images/" + src).toExternalForm());
-	    		de = new ImageView(deTransparent);
-	    	}
-	    	
-	    	de.setFitWidth(50);
-	    	de.setFitHeight(50);
-	    	de.setPreserveRatio(true);
-	    	
-	    	de.setX(x+25);
-	    	de.setY(y+25);
-	    	return de;
-    	}catch(Exception e) {
-    		System.err.println("Erreur lors du chargement de l'image pour le dé (couleur: " + color + ", valeur: " + valeur + ")");
+    private ImageView drawDe(De p, double x, double y) {
+        if (p == null) {
+            return null;
+        }
+
+        ImageView de = new ImageView(loadDeImage(p));
+        de.setFitWidth(50);
+        de.setFitHeight(50);
+        de.setPreserveRatio(true);
+
+        de.setX(x + 25);
+        de.setY(y + 25);
+
+        return de;
+    }
+    private Image loadDeImage(De p) {
+        int color = p.getCouleur();
+        int valeur = p.getValeur();
+        String src;
+
+        try {
+            if (color == -1) {
+                src = "n" + valeur + ".png";
+            } else {
+                src = "t" + valeur + ".png";
+            }
+            return new Image(getClass().getResource("/images/" + src).toExternalForm());
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement de l'image pour le dé (couleur: " + color + ", valeur: " + valeur + ")");
             e.printStackTrace();
             return null;
-    	}
-    	
+        }
     }
     
+    private VBox drawFeuille(ImageView imageViewFeuille) {
+    	HBox quartierBox1 = this.drawQuartier(0);
+        HBox quartierBox2 = this.drawQuartier(1);
+        HBox quartierBox3 = this.drawQuartier(2);
+        
+        HBox pionBox = drawPionBox(imageViewFeuille);
+        
+        VBox feuilleBox = new VBox(-70,quartierBox1,quartierBox2,quartierBox3,pionBox);
+        feuilleBox.setPadding(new Insets(30,0,0,0));
+        return feuilleBox;
+    }
     private HBox drawRessource(int type){
     	HBox ressourceBox = new HBox(20);
     	
