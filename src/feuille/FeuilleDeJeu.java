@@ -42,11 +42,11 @@ public class FeuilleDeJeu {
             	if(colorB ==1) {
             		amountHab = 1;
             		if(sec == 1 || sec == 2) {
-            			colorH = 1;
+            			colorH = 0;
             		}else if(sec ==3 || sec == 4) {
-            			colorH = 2;
+            			colorH = 1;
             		}else {
-            			colorH = 3;
+            			colorH = 2;
             		}
             	}   
             	else if(colorB == 2) {
@@ -57,9 +57,12 @@ public class FeuilleDeJeu {
             			ressource[0] = 0;
             			ressource[1] = 0;
             			ressource[2] = 3;
+            			colorDe = 0;
             			break;
             		case 2:
             			amountHab = 2;
+            			colorH = 0;
+            			colorDe = 0;
             			break;
             		case 3:
             			amountHab = 0;
@@ -71,6 +74,7 @@ public class FeuilleDeJeu {
             			break;
             		case 4:
             			amountHab = 2;
+            			colorH = 1;
             			colorDe = 1;
             			break;
             		case 5:
@@ -83,6 +87,7 @@ public class FeuilleDeJeu {
             			break;
             		case 6:
             			amountHab = 2;
+            			colorH = 2;
             			colorDe = 2;
             			break;
             		}

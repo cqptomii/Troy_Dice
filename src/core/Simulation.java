@@ -257,27 +257,46 @@ public class Simulation {
 		int batIndex = prestige ? 0 : 1;
 		return this.getTourJoueur().getFeuille().getQuartier(idQuartier).getSection(idSection).getBatiment(batIndex).getBonusLien();
 	}
+	public int getSectionPos(int sectionNumber) {
+		int sectionPos = 0;
+		if(this.indexFeuilles != null) {
+			for(int j = 0; j < this.indexFeuilles.length; ++j) {
+				if(this.indexFeuilles[j] == sectionNumber) {
+					sectionPos = j;
+				}
+			}
+		}else {
+			System.out.println("null");
+		}
+		
+		return sectionPos;
+	}
 	public boolean construireBatiment(int idQuartier, int idSection, boolean prestige) {
 		if(this.deChoisi.get() == null) {
 			return false;
 		}
 	    int color = this.deChoisi.get().getCouleur(); // couleur du dé
 	    int value = this.deChoisi.get().getValeur(); // valeur du dé
-
-	    if (idQuartier == color && value == idSection) {
+	    
+	    //Récupération de la position de la section
+	    int sectionIndex = this.getSectionPos(value);
+	    if (idQuartier == color && sectionIndex == idSection) {
 	        int batIndex = prestige ? 0 : 1;
 
 	        Batiment batiment = this.getTourJoueur()
 	                .feuille
 	                .getQuartier(idQuartier)
-	                .getSection(value)
+	                .getSection(idSection)
 	                .getBatiment(batIndex);
 
 	        if (batiment == null || !batiment.isConstructible()) {
 	            System.err.println("Le bâtiment ne peut pas être construit.");
 	            return false;
 	        }
-
+	        
+	        
+	        System.out.println("Construction du batiment " + batiment.toString());
+	        
 	        // Construire le bâtiment
 	        if (prestige && batiment instanceof Prestige) {
 	            Prestige prestigeBat = (Prestige) batiment;
@@ -292,6 +311,8 @@ public class Simulation {
 	            batiment.construire(0);
 	        }
 	        
+	        System.out.println("Ajout des habitants : " + batiment.getAmountHabitant() + "color : " + batiment.getColorHabitant());
+	       
 	        this.getTourJoueur().ajouterHabitant(batiment.getColorHabitant(), batiment.getAmountHabitant());
 	        
 	        
@@ -308,14 +329,16 @@ public class Simulation {
 	        	int amount = temp.getHabitant();
 	        	this.getTourJoueur().ajouterHabitant(colorH, amount);
 	        }
-	        System.out.println("Le Batiment a été construit" );
+	        
 	        // Passer au joueur suivant
 	        this.changementJoueur();
 
-	        return true; // Construction réussie
+	        return true;
 	    }
 
-	    return false; // Construction invalide
+	    System.out.println("Indexes incorrects du batiment -  Dé  : c " + color + "s " + sectionIndex + " Feuille : c" + idQuartier + " s" + idSection);
+	    
+	    return false;
 	}
 	public int getNbJoueurs() {
 		return this.joueurs.size();

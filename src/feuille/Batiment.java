@@ -65,7 +65,7 @@ public abstract class Batiment {
 		}
 	}
 	public boolean isConstructible() {
-		return this.etat != 2;
+		return (this.etat != 2&& this.etat != 1);
 	}
 	public int getEtat() {
 		return this.etat;

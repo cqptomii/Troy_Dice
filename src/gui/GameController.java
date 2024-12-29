@@ -598,7 +598,8 @@ public class GameController {
         
         for (int i = 0; i < 6; ++i) {
             Button batPrestige = new Button();
-            final int currentPos = i;
+            int idSection = this.gameMode.getIndexFeuille()[i];
+            final int currentPos = this.gameMode.getSectionPos(idSection);
             batPrestige.setOnAction(event -> {
                 this.gameMode.construireBatiment(color, currentPos, true);
             });
@@ -833,23 +834,30 @@ public class GameController {
 		    			else
 		    				GridPane.setMargin(imageView,new Insets(0,10,0,0));
 		    		}
-		    		habitantPane.setVisible(false);
+		    		imageView.setVisible(false);
 		    	}
 	    	}
     	}
-    	return habitantPane;
+    	habitantPane.setVisible(true);
+    	
+    	return updateHabitant(habitantPane);
     }
     private GridPane updateHabitant(GridPane pane) {
     	GridPane tempPane = pane;
     	
     	for(int lignes = 0; lignes < 3; ++lignes) {
     		int amount = this.gameMode.getTourJoueur().habitantProperty(lignes).get();
-    		
-    		for (int i = 0; i < tempPane.getChildren().size(); i++) {
-                Node node = tempPane.getChildren().get(i);
-
-                if (GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) == lignes) {
-                    node.setVisible(i < amount);
+    		for (Node node : pane.getChildren()) {
+                Integer rowIndex = GridPane.getRowIndex(node);
+                
+                if (rowIndex != null && rowIndex == lignes) {
+                    Integer columnIndex = GridPane.getColumnIndex(node);
+                    if (columnIndex != null) {
+                    	if(columnIndex < amount) {
+	                    	System.out.println("Mise à jour des habitants : noeud : " + columnIndex + " " + rowIndex);
+	                        node.setVisible(true);
+                    	}
+                    }
                 }
             }
     	

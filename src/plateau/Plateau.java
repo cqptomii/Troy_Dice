@@ -128,6 +128,9 @@ public class Plateau {
 	public int getAmoutDe(int color) {
 		int amount = 0;
 		for( Place d:this.places) {
+			if(d.getDe() == null) {
+				continue;
+			}
 			if(d.getDe().getCouleur() == color) {
 				amount++;
 			}
