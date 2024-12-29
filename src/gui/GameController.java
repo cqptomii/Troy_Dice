@@ -557,10 +557,9 @@ public class GameController {
     	if (index != null) {
     	    for (int i = 0; i < 5; ++i) {
     	        try {
-    	            Image imageIndex = new Image(getClass().getResource("/images/I" + color + ".png").toExternalForm());
-    	            ImageView imageViewIndex = new ImageView(imageIndex);
-    	            imageViewIndex.setFitHeight(52);
-    	            imageViewIndex.setPreserveRatio(true);
+    	        	boolean state = this.gameMode.getTourJoueur().getFeuille().isSectionProteger(color, i);
+    	        	ImageView imageViewIndex = this.loadIndexImage(state, false, color);
+    	            
     	            Label numberLabel = new Label(String.valueOf(index[i]));
     	            numberLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: bLack; -fx-font-weight: bold;");
 
@@ -576,10 +575,8 @@ public class GameController {
     	}
         
         try {
-        	Image imageIndexBorder = new Image(getClass().getResource("/images/ID" + color + ".png").toExternalForm());
-        	ImageView imageViewIndexBorder = new ImageView(imageIndexBorder);
-        	imageViewIndexBorder.setFitHeight(52);
-        	imageViewIndexBorder.setPreserveRatio(true);
+        	boolean state = this.gameMode.getTourJoueur().getFeuille().isSectionProteger(color, 5);
+        	ImageView imageViewIndexBorder = this.loadIndexImage(state, true, color);
         	
         	Label numberLabel = new Label(String.valueOf(index[5]));
             numberLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: bLack; -fx-font-weight: bold;");
@@ -600,26 +597,21 @@ public class GameController {
             Button batPrestige = new Button();
             int idSection = this.gameMode.getIndexFeuille()[i];
             final int currentPos = this.gameMode.getSectionPos(idSection);
+            
             batPrestige.setOnAction(event -> {
                 this.gameMode.construireBatiment(color, currentPos, true);
             });
-            batPrestige.setStyle("-fx-background-image: url('" + getClass().getResource("/images/P" + color + (i + 1) + ".png").toExternalForm() + "');" +
+            
+            //Récupération de l'image à afficher
+            int state = this.gameMode.getTourJoueur().getFeuille().getQuartier(color).getSection(i).getBatiment(0).getEtat();
+            String imageUrl = this.loadBatimentImage(state, true, color, i+1);
+            System.out.println(imageUrl);
+            batPrestige.setStyle("-fx-background-image: url('" + getClass().getResource(imageUrl).toExternalForm() + "');" +
                                  "-fx-background-size: cover;");
             batPrestige.setPrefWidth(69.1);
             batPrestige.setPrefHeight(40);
-            
-//            StackPane stackPane = new StackPane(batPrestige);
-            
-//            if(this.gameMode.getLien(color, i, true) != null) {
-//        		Image imageLienEtabli = new Image(getClass().getResource("/images/check.png").toExternalForm());
-//        		ImageView imageViewLienEtabli = new ImageView(imageLienEtabli);
-//        		imageViewLienEtabli.setFitWidth(15);
-//        		imageViewLienEtabli.setPreserveRatio(true);
-//        		// Afficher le lien sur l'image du bouton
-//        		stackPane.getChildren().add(imageViewLienEtabli);
-//        	}
-            
-           boutonPane.add(batPrestige, i, 1);
+             
+            boutonPane.add(batPrestige, i, 1);
         }
 
         for (int i = 0; i < 6; ++i) {
@@ -629,28 +621,64 @@ public class GameController {
             batTravail.setOnAction(event -> {
                 this.gameMode.construireBatiment(color, currentPos, false);
             });
-
-            batTravail.setStyle("-fx-background-image: url('" + getClass().getResource("/images/BT" + color + (i + 1) + ".png").toExternalForm() + "');" +
+            
+            
+            //Récupération de l'image à afficher
+            int state = this.gameMode.getTourJoueur().getFeuille().getQuartier(color).getSection(i).getBatiment(1).getEtat();
+            String imageUrl = this.loadBatimentImage(state, false, color, i+1);
+            batTravail.setStyle("-fx-background-image: url('" + getClass().getResource(imageUrl).toExternalForm() + "');" +
                                 "-fx-background-size: cover;");
             batTravail.setPrefWidth(69.1);
             batTravail.setPrefHeight(40);
-            
-//            StackPane stackPane = new StackPane(batTravail);
-//            
-//            if(this.gameMode.getLien(color, i, false) != null) {
-//        		Image imageLienEtabli = new Image(getClass().getResource("/images/check.png").toExternalForm());
-//        		ImageView imageViewLienEtabli = new ImageView(imageLienEtabli);
-//        		imageViewLienEtabli.setFitWidth(15);
-//        		imageViewLienEtabli.setPreserveRatio(true);
-//        		// Afficher le lien sur l'image du bouton
-//        		stackPane.getChildren().add(imageViewLienEtabli);
-//        	}
             
             boutonPane.add(batTravail, i, 2);
         }
         
         return boutonPane;
     }
+    private ImageView loadIndexImage(boolean state,boolean right,int color) {
+    	String imageUrl = "/images/";
+    	
+    	if(right) {
+    		imageUrl+= "ID";
+    	}else {
+    		imageUrl += "I";
+    	}
+    	
+    	if(state) {
+    		imageUrl += "P";
+    	}
+    	
+    	imageUrl += color+".png";
+    	
+    	Image imageIndex = new Image(getClass().getResource(imageUrl).toExternalForm());
+        ImageView imageViewIndex = new ImageView(imageIndex);
+        imageViewIndex.setFitHeight(52);
+        imageViewIndex.setPreserveRatio(true);
+        
+        return imageViewIndex;
+    }
+    private String loadBatimentImage(int state, boolean prestige,int color, int index) {
+    	String imageUrl = "/images/batiments/";
+    	
+    	if(prestige) {
+    		imageUrl += "P";
+    	}else {
+    		imageUrl += "BT";
+    	}
+    	if (state == 1) {
+    		imageUrl += "C";
+    	}else if(state == 2){
+    		imageUrl += "D";
+    	}
+    	
+    	imageUrl += color;
+    	imageUrl += index;
+    	imageUrl += ".png";
+    	
+    	return imageUrl;
+    }
+    
     private StackPane createBottomBox(int color, HBox parentBox) {
         StackPane bottomBox = new StackPane();
 

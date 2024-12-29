@@ -176,7 +176,10 @@ public class FeuilleDeJeu {
 		Section s = q.getSection(index);
 		s.detruireSection();
 	}
-	
+	public boolean isSectionProteger(int color,int index) {
+		Quartier q = this.quartiers.get(color);
+		return q.getSection(index).getProteger();
+	}
 	public int computeScore() {
 		if(quartiers.size() == 0) {
 			return 0;
@@ -225,4 +228,5 @@ public class FeuilleDeJeu {
 	public Joueur getJoueur() {
 		return this.owner;
 	}
+	
 }
