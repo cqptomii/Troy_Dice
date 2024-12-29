@@ -178,6 +178,7 @@ public class FeuilleDeJeu {
 		}
 		scoreFeuille.set(0);
 		for(Quartier q : this.quartiers) {
+			q.computeScore();
 			scoreFeuille.set(scoreFeuille.get() + q.getScore());
 		}
 		

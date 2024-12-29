@@ -1,5 +1,6 @@
 package plateau;
 import java.util.Random;
+
 public class Place {
 	/* COULEUR DES DEUX FACES
 	 * 0 : orange

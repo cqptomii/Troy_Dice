@@ -67,12 +67,18 @@ public class Plateau {
 	public void placerDés(De [] valeurDes){
 		try{
 			if(valeurDes.length == 4) {
-				int index = 0;
+				int index = -1;
+				
 				for(int i = 0; i < 9; ++i) {
 					if(this.indexPlace[i] == 0) {
 						index = i;
 					}
 				}
+				
+				if (index == -1) {
+	                throw new IllegalStateException("Aucune case libre trouvée pour placer les dés.");
+	            }
+				
 				if(this.demiTour.get()) { // seconde parties de tour
 					index += 5;
 				}else { // première partie de tour
@@ -81,7 +87,8 @@ public class Plateau {
 				
 				Arrays.sort(valeurDes, (de1,de2) -> Integer.compare(de1.getValeur(), de2.getValeur()));
 				for(int i = 0; i < 4 ; ++i) {
-					this.places[(index+i) % 8].placerDé(valeurDes[i]);
+					int targetIndex = (index + i) % this.places.length;
+					this.places[targetIndex].placerDé(valeurDes[i]);
 				}
 			}
 		} catch (IndexOutOfBoundsException e) {

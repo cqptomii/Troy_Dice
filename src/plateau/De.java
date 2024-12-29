@@ -1,5 +1,6 @@
 package plateau;
 
+
 public class De {
 	
 	// valeur du dé : 1 - 6
@@ -13,6 +14,8 @@ public class De {
 	private int couleur;
 	
 	public De(int valeur,int couleur) {
+		this.valeur = 0;
+		this.couleur = 0;
 		this.setValeur(valeur);
 		this.setCouleur(couleur);
 	}
@@ -42,5 +45,4 @@ public class De {
 		String val = new String("Dé ::  Couleur : " + this.couleur + "  Valeur : " + this.valeur);
 		return val;
 	}
-	
 }

@@ -173,7 +173,7 @@ public class Simulation {
 		if(place != null) {
 			
 			this.prixDeChoisi = place.getPrix();
-			if(this.tourJoueur.get().canUse(0, this.prixDeChoisi[1])) {
+			if(this.tourJoueur.get().canUse(1, this.prixDeChoisi[1])) {
 				
 				this.deChoisi.set(place.getDe());
 				if(deChoisi.get() == null) {
