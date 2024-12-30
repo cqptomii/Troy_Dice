@@ -63,7 +63,9 @@ public class Place {
 		this.faceVisible = this.faceCachée;
 		this.faceCachée = tempFace;
 	}
-	
+	public boolean isMultiplePriceChoice() {
+		return (this.prix[0] !=0 && this.prix[1] != 0 && this.prix[2] != 0); 
+	}
 	public String toString() {
 		String val;
 		if(this.gainsDe != null) {

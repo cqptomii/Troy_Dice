@@ -1,21 +1,23 @@
 package plateau;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 public class De {
 	
 	// valeur du dé : 1 - 6
-	private int valeur;
+	private IntegerProperty valeur;
 	/*
 	 * -1 : dé noir
 	 * 0 : dé orange
 	 * 1 : dé bleu
 	 * 2 : dé gris
 	*/
-	private int couleur;
+	private IntegerProperty couleur;
 	
 	public De(int valeur,int couleur) {
-		this.valeur = 0;
-		this.couleur = 0;
+		this.valeur = new SimpleIntegerProperty(0);
+		this.couleur = new SimpleIntegerProperty(0);
 		this.setValeur(valeur);
 		this.setCouleur(couleur);
 	}
@@ -26,20 +28,26 @@ public class De {
 		}
 	}
 	public int getCouleur() {
-		return this.couleur;
+		return this.couleur.get();
 	}
 	public int getValeur() {
-		return this.valeur;		
+		return this.valeur.get();		
 	}
 	public void setValeur(int val) {
 		if(val > 0 && val <= 6) {
-			this.valeur = val;
+			this.valeur.set(val);
 		}
 	}
 	public void setCouleur(int couleur) {
-		if(this.couleur >= -1 && this.couleur < 3) {
-			this.couleur = couleur;
+		if(this.couleur.get() >= -1 && this.couleur.get() < 3) {
+			this.couleur.set(couleur);
 		}
+	}
+	public IntegerProperty valeurProperty() {
+		return this.valeur;
+	}
+	public IntegerProperty couleurProperty() {
+		return this.couleur;
 	}
 	public String toString() {
 		String val = new String("Dé ::  Couleur : " + this.couleur + "  Valeur : " + this.valeur);

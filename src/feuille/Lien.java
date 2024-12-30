@@ -9,27 +9,23 @@ public class Lien {
 	private int colorH;
 	public Lien(int rHab,int colorH,int rCred,int rCon,int rExp,Batiment batL,Batiment batR) {
 		this.recompense = new int[3];
-		if(rHab > 0 && rHab < 3) {
+		if(rHab >= 0 && rHab < 3) {
 			this.habitants = rHab;
 			this.colorH = colorH;
 		}
-		if(rCred < 4 && rCred > 0) {
-			this.recompense[0] = rCred;
+		if(rCred < 4 && rCred >= 0) {
+			this.recompense[0] = rExp;
 		}
-		if(rCon < 4 && rCon > 0) {
-			this.recompense[1] = rCon;
+		if(rCon < 4 && rCon >= 0) {
+			this.recompense[1] = rCred;
 		}
-		if(rExp < 4 && rExp > 0) {
-			this.recompense[2] = rExp;
+		if(rExp < 4 && rExp >= 0) {
+			this.recompense[2] = rCon;
 		}
 		
 		this.batiments = new ArrayList<Batiment>();
-		if(batL != null) {
-			this.batiments.add(batL);
-		}
-		if(batR.equals(batR) == false) {
-			this.batiments.add(batR);
-		}
+		this.batiments.add(batL);
+		this.batiments.add(batR);
 	}
 	
 	public boolean lienEtablis() {

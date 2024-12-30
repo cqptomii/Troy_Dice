@@ -23,7 +23,7 @@ public class Joueur {
         
         this.habitantObtenu = new IntegerProperty[3];
         for(int i=0; i < this.habitantObtenu.length;++i) {
-        	this.habitantObtenu[i] = new SimpleIntegerProperty(1);
+        	this.habitantObtenu[i] = new SimpleIntegerProperty(0);
         }
     }
 	

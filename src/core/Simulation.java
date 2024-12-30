@@ -23,13 +23,11 @@ public class Simulation {
 	private int[] prixDeChoisi;
 	private final IntegerProperty tour;
 	private final ObjectProperty<De> deChoisi;
-	private De storedDeChoisi;
 	private final ObjectProperty<Joueur> tourJoueur;
 	
 	public Simulation() {		
 		this.tour = new SimpleIntegerProperty(1);
 		this.deChoisi = new SimpleObjectProperty<>(null);
-		this.storedDeChoisi = null;
 		this.tourJoueur = new SimpleObjectProperty<>(null);
 		this.modeJeu = 0;
 		this.nombreJoueurs = 0;
@@ -147,11 +145,6 @@ public class Simulation {
 	}
 	
 	public void changementJoueur(){
-		if(this.storedDeChoisi != null) {
-			this.getDeChoisi().setCouleur(storedDeChoisi.getCouleur());
-			this.getDeChoisi().setValeur(storedDeChoisi.getValeur());
-			this.storedDeChoisi = null;
-		}
 		this.deChoisi.set(null);
 		
 		int tempIndex = joueurs.indexOf(tourJoueur.get()) + 1;
@@ -168,25 +161,29 @@ public class Simulation {
 		tourJoueur.get().updateScore();
 		
 	}
-	public void choixDé(Place place) {
+	public void choixDé(Place place, int ressourceIndex) {
 		if(place != null) {
 			
-			this.prixDeChoisi = place.getPrix();
-			if(this.tourJoueur.get().canUse(1, this.prixDeChoisi[1])) {
-				
-				this.deChoisi.set(place.getDe());
-				if(deChoisi.get() == null) {
-					return;
+			try {
+				this.prixDeChoisi = place.getPrix();
+				if(this.tourJoueur.get().canUse(ressourceIndex, this.prixDeChoisi[ressourceIndex])) {
+					
+					this.deChoisi.set(new De(place.getDe().getValeur(),place.getDe().getCouleur()));
+					if(deChoisi.get() == null) {
+						return;
+					}
+					if(this.deChoisi.get().getCouleur() == -1) {
+						this.deChoisi.set(null);
+						System.out.println("Impossible de choisir le dé noir");
+						return;
+					}
+					//mettre a jour les ressourcces du joueur
+					this.tourJoueur.get().utiliserRessource(ressourceIndex , this.prixDeChoisi[ressourceIndex]);
+					System.out.println("Choix du dé : " + this.deChoisi + "Prix : " + this.prixDeChoisi[ressourceIndex] );
 				}
-				if(this.deChoisi.get().getCouleur() == -1) {
-					this.deChoisi.set(null);
-					System.out.println("Impossible de choisir le dé noir");
-					return;
-				}
-				//mettre a jour les ressourcces du joueur
-				this.tourJoueur.get().utiliserRessource(1 , this.prixDeChoisi[1]);
-				System.out.println("Choix du dé : " + this.deChoisi + "Prix : " + this.prixDeChoisi[1] );
-			}
+			}catch (NullPointerException e) {
+	    	    System.err.println(e);
+	    	}
 		}
 	}
 	public De getDeChoisi() {
@@ -206,8 +203,6 @@ public class Simulation {
 			
 			if(couleur != couleurDe) {
 				if(this.getTourJoueur().canUse(2,2)) {
-					if(storedDeChoisi == null)
-						this.storedDeChoisi = this.getDeChoisi();
 					
 					this.getTourJoueur().utiliserRessource(2, 2);
 					this.getDeChoisi().setCouleur(couleur);
@@ -227,8 +222,6 @@ public class Simulation {
 			if(valeur != valeurDe) {
 				int difference = Math.abs(valeur- valeurDe);
 				if(this.getTourJoueur().canUse(0, difference)) {
-					if(storedDeChoisi == null)
-						this.storedDeChoisi = this.getDeChoisi();
 					
 					this.getTourJoueur().utiliserRessource(0, difference);
 					this.getDeChoisi().setValeur(valeur);
@@ -318,15 +311,18 @@ public class Simulation {
 	        // Vérifier et appliquer les effets des liens bonus
 	        Lien temp = batiment.getBonusLien();
 	        if(temp != null) {
-	        	int[] lienRecompense = temp.getRecompense();
-	        	if(lienRecompense != null) {
-		        	for(int i = 0; i < lienRecompense.length; ++i) {
-		            	this.getTourJoueur().ajouterRessource(i, lienRecompense[i]);
-		            }
-		        }
-	        	int colorH = temp.getColorHabitant();
-	        	int amount = temp.getHabitant();
-	        	this.getTourJoueur().ajouterHabitant(colorH, amount);
+	        	if(temp.lienEtablis()) {
+		        	int[] lienRecompense = temp.getRecompense();
+		        	if(lienRecompense != null) {
+			        	for(int i = 0; i < lienRecompense.length; ++i) {
+			            	this.getTourJoueur().ajouterRessource(i, lienRecompense[i]);
+			            }
+			        }
+		        	int colorH = temp.getColorHabitant();
+		        	int amount = temp.getHabitant();
+		        	System.out.println("Lien :" + temp + " créé " + colorH + " " + amount); 
+		        	this.getTourJoueur().ajouterHabitant(colorH, amount);
+	        	}
 	        }
 	        
 	        // Passer au joueur suivant
@@ -353,8 +349,21 @@ public class Simulation {
     public Joueur getTourJoueur() {
         return this.tourJoueur.get();
     }
-
+    public ArrayList<Joueur> getJoueurs(){
+    	return this.joueurs;
+    }
     public ObjectProperty<Joueur> tourJoueurProperty() {
         return this.tourJoueur;
+    }
+    
+    public Joueur getWinner() {
+    	Joueur winner = this.joueurs.getFirst();
+    	for(Joueur w : this.joueurs) {
+    		if(w.getScore() > winner.getScore()) {
+    			winner = w;
+    		}
+    	}
+    	
+    	return winner;
     }
 }
