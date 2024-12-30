@@ -42,7 +42,7 @@ public class Prestige extends Batiment {
 				this.recompenseBonus[i] *= nbDe;
 			}
 			this.habitant *= nbDe;
-			
+			System.out.println("Dé multiplié : " + this.colorDeMult + " nbDe : " + nbDe + "hab : " + this.habitant);
 		}else {
 			//Mettre à jour le multiplicateur de batiments
 			this.currFeuille.addMult();

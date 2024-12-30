@@ -39,7 +39,7 @@ public class FeuilleDeJeu {
             	ressource[2] = 0;
             	
                 // Créer les bâtiments de prestige et de travail pour chaque section
-            	if(colorB ==1) {
+            	if(colorB ==0) {
             		amountHab = 1;
             		if(sec == 1 || sec == 2) {
             			colorH = 0;
@@ -49,14 +49,14 @@ public class FeuilleDeJeu {
             			colorH = 2;
             		}
             	}   
-            	else if(colorB == 2) {
+            	else if(colorB == 1) {
             		switch(sec) {
             		case 1:
             			amountHab = 0;
             			
-            			ressource[0] = 0;
+            			ressource[0] = 3;
             			ressource[1] = 0;
-            			ressource[2] = 3;
+            			ressource[2] = 0;
             			colorDe = 0;
             			break;
             		case 2:
@@ -67,8 +67,8 @@ public class FeuilleDeJeu {
             		case 3:
             			amountHab = 0;
             			
-            			ressource[0] = 3;
-            			ressource[1] = 0;
+            			ressource[0] = 0;
+            			ressource[1] = 3;
             			ressource[2] = 0;
             			colorDe = 1;
             			break;
@@ -81,8 +81,8 @@ public class FeuilleDeJeu {
             			amountHab = 0;
             			
             			ressource[0] = 0;
-            			ressource[1] = 3;
-            			ressource[2] = 0;
+            			ressource[1] = 0;
+            			ressource[2] = 3;
             			colorDe = 2;
             			break;
             		case 6:
@@ -94,28 +94,28 @@ public class FeuilleDeJeu {
             	}else {
             		switch(sec) {
             		case 1:
-            			multType = false;
-            			indexMult = 1;
+            			multType = true;
+            			indexMult = 0;
             			break;
             		case 2:
+            			multType = false;
+            			indexMult = 0;
+            			break;
+            		case 3:
             			multType = true;
             			indexMult = 1;
             			break;
-            		case 3:
-            			multType = false;
-            			indexMult = 2;
-            			break;
             		case 4:
-            			multType = true;
-            			indexMult = 2;
+            			multType = false;
+            			indexMult = 1;
             			break;
             		case 5:
-            			multType = false;
-            			indexMult = 3;
+            			multType = true;
+            			indexMult = 2;
             			break;
             		case 6:
-            			multType = true;
-            			indexMult = 3;
+            			multType = false;
+            			indexMult = 2;
             			break;
             		}
             	}

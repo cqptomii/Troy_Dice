@@ -130,12 +130,13 @@ public class Plateau {
 		for( Place d:this.places) {
 			if(d.getDe() == null) {
 				continue;
-			}
-			if(d.getDe().getCouleur() == color) {
-				amount++;
+			}else {
+				if(d.getFaceVisible() == color) {
+					amount++;
+				}
 			}
 		}
-		
+		System.out.println("Nombre de dé : " + color + "= " + amount);
 		return amount;
 	}
 	public String toString() {

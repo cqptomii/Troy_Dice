@@ -99,7 +99,7 @@ public class Quartier {
 		}else {
 			index = 1;
 		}
-		for(Section s : this.getSections()) {
+		for(Section s : this.sections) {
 			if(s.getBatiment(index).etat == 1) {
 				amount++;
 			}

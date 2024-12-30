@@ -880,8 +880,7 @@ public class GameController {
                     Integer columnIndex = GridPane.getColumnIndex(node);
                     if (columnIndex != null) {
                     	if(columnIndex < amount) {
-	                    	System.out.println("Mise à jour des habitants : noeud : " + columnIndex + " " + rowIndex);
-	                        node.setVisible(true);
+	                    	node.setVisible(true);
                     	}
                     }
                 }

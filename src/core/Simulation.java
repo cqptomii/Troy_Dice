@@ -136,13 +136,13 @@ public class Simulation {
 		//Mise à jour de la feuille de jeu en fonction du dé noir
 		if(this.tour.get() >= 3) {
 			Place temp = this.plateauJeu.getPlaceDeNoir();
-			
 			int color = temp.getFaceVisible();
-			int value = temp.getDe().getValeur();
+			int value = this.getSectionPos(temp.getDe().getValeur());
 			
 			for(Joueur j: this.joueurs) {
 				j.getFeuille().detruireSection(color, value);
 			}
+			
 		}
 	}
 	
@@ -155,8 +155,7 @@ public class Simulation {
 		this.deChoisi.set(null);
 		
 		int tempIndex = joueurs.indexOf(tourJoueur.get()) + 1;
-		System.out.println("Changement de joueur : " + (tempIndex-1) + "-> " + tempIndex + "Taille initial : " + joueurs.size());
-		
+
 		//retourner la place où il y a le dé noir
 		if(tempIndex >= this.joueurs.size()) {
 			this.plateauJeu.getPlaceDeNoir().retourner();
