@@ -69,6 +69,12 @@ public class Interface extends Application{
 		primaryStage.setTitle("UTBM Dice - Game");
 		primaryStage.show();
 	}
+	protected void showEndScene() {
+		EndController eController = new EndController(this.primaryStage);
+		primaryStage.setScene(eController.getScene());
+		primaryStage.setTitle("UTBM Dice - End");
+		primaryStage.show();
+	}
 	public void run() {
 		launch();
 	}

@@ -1,8 +1,12 @@
 package gui;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.StringExpression;
 import javafx.beans.property.StringProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
@@ -14,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -29,9 +34,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import plateau.De;
 import plateau.Place;
+
+import java.util.Optional;
+
 import core.*;
 import feuille.FeuilleDeJeu;
 import feuille.Quartier;
@@ -44,7 +54,7 @@ public class GameController {
     private Scene scene;
     private Simulation gameMode;
     private Crieur crieur;
-    
+    private boolean isGameOver;
     
     private VBox choisirDe;
     public GameController(Interface app,Stage primaryStage,Crieur crieur) {
@@ -52,6 +62,7 @@ public class GameController {
         this.primaryStage = primaryStage;
         this.gameMode = Simulation.getInstance();
         this.crieur = crieur;
+        this.isGameOver = false;
         createScene();
     }
     private void createScene() {
@@ -72,6 +83,19 @@ public class GameController {
         //
         Label tour = new Label();
 	    tour.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+	    
+	    tour.textProperty().addListener((obs,lastValue,newValue) ->{
+	    	if (this.gameMode.getTour() >= 9) {
+	    	    this.isGameOver = true;
+	    	    this.mainApp.showEndScene();
+	    	    return;
+	    	}
+	    });
+	    
+	    if (this.isGameOver) {
+	        return;
+	    }
+	    
 	    
 	    tour.textProperty().bind(this.gameMode.tourProperty().asString("Année numéro: %d"));
 	    Label demiTour = new Label(" - Automne");
@@ -294,15 +318,22 @@ public class GameController {
             	String [] colorArray = {"Orange","Bleu","Gris"};
             	int initialValue = newDe.getValeur();
                 int initialColor = newDe.getCouleur();
-
+                
                 final int[] tempColor = {initialColor};
                 final int[] tempValue = {initialValue};
                 if(tempColor[0] == -1) {
                 	System.out.println("Dé noir");
                 	return;
                 }
-                status.setText(String.format("Dé sélectionné : Valeur = %d, Couleur = %s", tempValue[0],colorArray[tempColor[0]]));
-            
+                status.setText(String.format("Dé sélectionné : Valeur = %d, Couleur = %s", initialValue, colorArray[initialColor]));
+                
+                newDe.valeurProperty().addListener((observable, oldValue, newValue) -> {
+                    status.setText(String.format("Dé sélectionné : Valeur = %d, Couleur = %s", newValue.intValue(), colorArray[newDe.getCouleur()]));
+                });
+
+                newDe.couleurProperty().addListener((observable, oldColor, newColor) -> {
+                    status.setText(String.format("Dé sélectionné : Valeur = %d, Couleur = %s", newDe.getValeur(), colorArray[newColor.intValue()]));
+                });
                 
                 // Section pour modifier la couleur
                 Label colorLabel = new Label("Modifier la couleur :");
@@ -413,7 +444,10 @@ public class GameController {
         	
         placeButton.setOnAction(e -> {
         	if(this.gameMode.getDeChoisi() == null) {
-        		this.gameMode.choixDé(p);
+        		if(p.isMultiplePriceChoice()) {
+        			this.showRessourceChoice(p);
+        		}else
+        			this.gameMode.choixDé(p,1);
         	}
         });
 
@@ -548,6 +582,7 @@ public class GameController {
         return topBox;
     }
     private GridPane drawBatimentButton(int color) {
+    	String [] colorArray = {"Orange","Bleu","Gris"};
     	GridPane boutonPane = new GridPane();
     	boutonPane.setPadding(new Insets(0,0,2,-2));
     	boutonPane.setVgap(-0.5);
@@ -593,6 +628,18 @@ public class GameController {
     	    System.err.println("/images/ID" + color + ".png");
     	}
         
+        
+        String descPrestige;
+        if(color == 0) {
+        	descPrestige = "Ce Batiment permet de proteger une section complète sur chacun des quartiers de votre feuille de jeu";
+        }else if(color == 1) {
+        	descPrestige = "Ce Batiment permet l'obtention d'un montant de ressource ou d'habitants en fonctions du nombre de dés de la couleur annoncé .\n "
+        			+ " Le montant gagné est égale au produit entre le nombre de ressource et le nombre de dé de la couleur annoncée.";
+        }else {
+        	descPrestige = "Ce Batiment permet d'augmenter le multiplicateur sur l'ensemble des quartiers de votre feuille de jeu. \n" +
+        			" De plus il vous permettra d'activer le multiplicateur sur le type de batiment associé.";
+        			
+        }
         for (int i = 0; i < 6; ++i) {
             Button batPrestige = new Button();
             int idSection = this.gameMode.getIndexFeuille()[i];
@@ -601,6 +648,9 @@ public class GameController {
             batPrestige.setOnAction(event -> {
                 this.gameMode.construireBatiment(color, currentPos, true);
             });
+            
+            
+            this.setupButtonWithAlert(batPrestige,"Batiment de prestige " + colorArray[color],descPrestige);
             
             //Récupération de l'image à afficher
             int state = this.gameMode.getTourJoueur().getFeuille().getQuartier(color).getSection(i).getBatiment(0).getEtat();
@@ -620,7 +670,7 @@ public class GameController {
             batTravail.setOnAction(event -> {
                 this.gameMode.construireBatiment(color, currentPos, false);
             });
-            
+            this.setupButtonWithAlert(batTravail,"Batiment de travail","Ceci est un Batiment de travail, il offre 2 habitants " + colorArray[color] + " lors de sa construction");
             
             //Récupération de l'image à afficher
             int state = this.gameMode.getTourJoueur().getFeuille().getQuartier(color).getSection(i).getBatiment(1).getEtat();
@@ -889,16 +939,69 @@ public class GameController {
     	}
     	return tempPane;
     }
-    private Scene createNombreJoueursScene(Stage primaryStage) {
-    	
-    	
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Information");
-        alert.setHeaderText(null);
-        alert.setContentText("Demande du nombre de joueurs ici");
-        alert.showAndWait();
+    private Alert createAlert(String title, String header, String content,int type) {
+    	Alert alert;
+    	if(type == 1) {
+    		alert = new Alert(Alert.AlertType.CONFIRMATION);
+    	}else {
+    		alert = new Alert(Alert.AlertType.INFORMATION);
+    	}
+    	alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+         
+        return alert;
+    }
+    public void setupButtonWithAlert(Button button,String title, String header) {
+        Timeline hoverTimer = new Timeline();
+        hoverTimer.setCycleCount(1);
 
-        // Créez et retournez la scène nombreJoueurs comme dans votre code d'origine
-        return null;  // Retournez la scène appropriée ici
+        hoverTimer.getKeyFrames().add(new KeyFrame(Duration.seconds(2.0), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            	Platform.runLater(() -> {
+                    // Create and display the alert
+                    Alert alert = createAlert(title,header,"",0);
+                    alert.showAndWait();
+                });
+            }
+        }));
+
+        button.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+            hoverTimer.playFromStart();
+        });
+
+        button.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+            hoverTimer.stop();
+        });
+    }
+    private void showRessourceChoice(Place p) {
+
+    	Alert alert = this.createAlert("Choix type de ressource", "Veuillez choisir le type de ressource à utiliser.", "Quel est votre choix ?", 1);
+
+        // Crée trois boutons personnalisés
+        ButtonType buttonTypeOne = new ButtonType("Experience");
+        ButtonType buttonTypeTwo = new ButtonType("Crédit");
+        ButtonType buttonTypeThree = new ButtonType("Connaissance");
+
+        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeThree);
+
+        // Affiche l'alerte et récupère la sélection de l'utilisateur
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent()) {
+            if (result.get() == buttonTypeOne) {
+                System.out.println("L'utilisateur a choisi l'Option Exp");
+                this.gameMode.choixDé(p,0);
+            } else if (result.get() == buttonTypeTwo) {
+                System.out.println("L'utilisateur a choisi l'Option Crédit");
+                this.gameMode.choixDé(p,1);
+            } else if (result.get() == buttonTypeThree) {
+                System.out.println("L'utilisateur a choisi l'Option Connaissance");
+                this.gameMode.choixDé(p,2);
+            } else {
+                System.out.println("Aucune option sélectionnée");
+            }
+        }
     }
 }
