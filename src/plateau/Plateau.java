@@ -1,19 +1,35 @@
 package plateau;
-import java.util.Arrays;
 
+import java.util.Arrays;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-
 import java.util.ArrayList;
+
+/**
+ * Cette classe modélise le plateau de jeu 
+ * 
+ * @version 1.0
+ *
+ * @see Plateau
+ * @author Tom FRAISSE
+ */
 public class Plateau {
-	private BooleanProperty demiTour;
+	
+	private BooleanProperty demiTour; /* Variable d'état du demi tour  */
 	
 	private int[] indexPlace;
 	
 	private Place[] places;
 	
 	private ArrayList<Integer[]>listePrixPlace;
-		
+	
+	/** 
+	 * Cette méthode permet de construire le plateau de jeu
+	 *   
+	 * 
+	 * @see Plateau#Plateau 
+	 * @author Tom FRAISSE
+	 */
 	public Plateau() {
 		this.places = new Place[9];
 		this.indexPlace = new int[9];
@@ -29,6 +45,12 @@ public class Plateau {
 		}
 	}
 	
+	/** 
+	 * Cette méthode permet d'initialiser les prix des différentes place du plateau.
+	 *
+	 * @see Plateau#initListePrix 
+	 * @author Tom FRAISSE
+	 */
 	private void  initListePrix() {
 		Integer [][] tempTab = {
 							{0,0,0},
@@ -46,7 +68,16 @@ public class Plateau {
 		}
 	}
 	
-	public void updatePlaceValue() {
+	/** 
+	 * Cette méthode permet de mettre à jour les places du plateau de jeu
+	 *   
+	 * @exception IndexOutOfBoundsException  Accès invalide sur le tableau de place 
+	 * @exception NullPointerException Rencontre d'une référence null
+	 * 
+	 * @see Plateau#updatePlaceValue 
+	 * @author Tom FRAISSE
+	 */
+	public void updatePlaceValue() throws IndexOutOfBoundsException,NullPointerException {
 		try {
 			for(int i = 0; i < 9; ++i) {
 				int tempIndex = (8+this.indexPlace[i])%9;
@@ -64,7 +95,17 @@ public class Plateau {
 	    }
 	}
 	
-	public void placerDés(De [] valeurDes){
+	/** 
+	 * Cette méthode permet de placer les 4 dé sur le plateau de jeu
+	 * Les dés seront placés selon l'état du tour de jeu
+	 *   
+	 * @exception IndexOutOfBoundsException  Accès invalide sur le tableau de place 
+	 * @exception NullPointerException Rencontre d'une référence null
+	 * 
+	 * @see Plateau#placerDés 
+	 * @author Tom FRAISSE
+	 */
+	public void placerDés(De [] valeurDes) throws IndexOutOfBoundsException,NullPointerException{
 		try{
 			if(valeurDes.length == 4) {
 				int index = -1;
@@ -97,17 +138,50 @@ public class Plateau {
 	        System.err.println("Erreur : Une référence null a été rencontrée lors du placement des dés : " + e.getMessage());
 	    }
 	}
+	
+	/** 
+	 * Cette méthode permet de supprimer les dés de toutes les places du plateau
+	 *   
+	 * 
+	 * @see Place#Place 
+	 * @author Tom FRAISSE
+	 */
 	public void supprimerDés() {
 		for(Place p : this.places) {
 			p.supprimerDé();
 		}
 	}
+	
+	/** 
+	 * Cette méthode permet de construire une place qui ne contient pas de dé.
+	 * La couleur des deux faces seront definis avec la bibliothèque Random
+	 * 
+	 * @see Plateau#setDemiTour 
+	 * @author Tom FRAISSE
+	 */
 	public void setDemiTour(boolean valeur) {
 		this.demiTour.set(valeur);
 	}
+	/** 
+	 * Cette méthode permet d'obtenir le tableau des places du plateau
+	 * 
+	 * @return Tableau des places de jeu
+	 *  
+	 * @see Plateau#getPlace 
+	 * @author Tom FRAISSE
+	 */
 	public Place[] getPlace() {
 		return this.places;
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir la place contenant le dé noir
+	 * 
+	 * @return Place contenant le dé noir
+	 * 
+	 * @see Plateau#getPlaceDeNoir 
+	 * @author Tom FRAISSE
+	 */
 	public Place getPlaceDeNoir() {
 		for(Place p : this.places) {
 			if(p.getDe() == null ){
@@ -119,12 +193,39 @@ public class Plateau {
 		}
 		return null;
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir l'état du tour de jeu
+	 *   
+	 * @return état du tour de jeu
+	 * 
+	 * @see Plateau#getDemiTour
+	 * @author Tom FRAISSE
+	 */
 	public boolean getDemiTour() {
 		return this.demiTour.get();
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir l'instance BooleanProperty de l'état du tour de jeu
+	 * 
+	 * @return Instance BooleanProperty du tour de jeu
+	 * 
+	 * @see Plateau#PdemiTourProperty 
+	 * @author Tom FRAISSE
+	 */
 	public BooleanProperty demiTourProperty() {
 		return this.demiTour;
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir le nombre de dé d'une couleur présente sur la plateau de jeu
+	 *   
+	 * @return nombre de dé de la couleur associé
+	 * 
+	 * @see Plateau#getAmountDe 
+	 * @author Tom FRAISSE
+	 */
 	public int getAmoutDe(int color) {
 		int amount = 0;
 		for( Place d:this.places) {
@@ -139,6 +240,15 @@ public class Plateau {
 		System.out.println("Nombre de dé : " + color + "= " + amount);
 		return amount;
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir une chaine de caractère contenant les informations des différents places du plateau
+	 *   
+	 * @return Chaine de caractère
+	 * 
+	 * @see Plateau#toString 
+	 * @author Tom FRAISSE
+	 */
 	public String toString() {
 		for(int i = 0; i < 9; i++) {
 			System.out.println(this.places[i].toString());
