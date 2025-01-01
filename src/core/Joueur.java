@@ -2,7 +2,6 @@
 import feuille.FeuilleDeJeu;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import plateau.De;
 
 /**
  * Cette classe modélise un joueur
