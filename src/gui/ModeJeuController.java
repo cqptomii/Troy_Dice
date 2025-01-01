@@ -70,7 +70,6 @@ public class ModeJeuController {
 		
 		Label lDe = new Label("0");
 		 lDe.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 10;");
-		int deValue = Integer.parseInt(lDe.getText());
 		bDeLancer.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
 		bDeLancer.setOnAction(event -> onLancerDe(event, lDe));
 		
@@ -79,11 +78,19 @@ public class ModeJeuController {
 		
 		Button bDecroissant = new Button("Ordre décroissant");
 		bDecroissant.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
-		bDecroissant.setOnAction(event -> onChoisirOrdre(event, 1,deValue));
+		bDecroissant.setOnAction(event -> {
+			int deValue = Integer.parseInt(lDe.getText());
+			if(deValue > 0 && deValue <=6)
+				onChoisirOrdre(event, 1,deValue);
+			});
 		
 		Button bCroissant = new Button("Ordre croissant");
 		bCroissant.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
-		bCroissant.setOnAction(event -> onChoisirOrdre(event, 0,deValue));
+		bCroissant.setOnAction(event ->{
+			int deValue = Integer.parseInt(lDe.getText());
+			if(deValue > 0 && deValue <=6)
+				onChoisirOrdre(event, 0,deValue);
+			});
 		
 		HBox bLayout = new HBox(20, bDecroissant, bCroissant);
 	    bLayout.setAlignment(Pos.CENTER);
@@ -101,13 +108,13 @@ public class ModeJeuController {
 		this.scene = new Scene(root,400,400);
     }
     public void onChoisirMode(ActionEvent event, int mode) {
-    	if(mode==0) {
+    	if(mode==0) { // ordonnée
     		this.onChoisirOrdre(event, 2, 1);
     	}
-    	else if(mode == 1) {
+    	else if(mode == 1) { // croissant / décroissant
     		this.createSceneFeuille();
     		this.stage.setScene(this.scene);
-    	}else {
+    	}else { // aléatoir
     		this.onChoisirOrdre(event, -1, 1);
     	}
     }

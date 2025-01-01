@@ -91,6 +91,8 @@ public class Simulation {
 		else if(value >0 && value <= 6) {
 			this.indexFeuilles = this.crieur.choisirIndexGrille(value, ordre);
 		}
+		System.out.println("erreur" + ordre + value);
+		
 	}
 	public int[] getIndexFeuille() {
 		return this.indexFeuilles;
@@ -295,7 +297,6 @@ public class Simulation {
 	            int amountDe = this.plateauJeu.getAmoutDe(prestigeBat.getColorDe());
 	            prestigeBat.construire(amountDe);
 	            int [] recompense = prestigeBat.getRecompenseBonus();
-	            
 	            for(int i = 0; i < recompense.length; ++i) {
 	            	this.getTourJoueur().ajouterRessource(i, recompense[i]);
 	            }
@@ -304,14 +305,13 @@ public class Simulation {
 	        }
 	        
 	        System.out.println("Ajout des habitants : " + batiment.getAmountHabitant() + "color : " + batiment.getColorHabitant());
-	       
 	        this.getTourJoueur().ajouterHabitant(batiment.getColorHabitant(), batiment.getAmountHabitant());
 	        
 	        
 	        // Vérifier et appliquer les effets des liens bonus
 	        Lien temp = batiment.getBonusLien();
 	        if(temp != null) {
-	        	if(temp.lienEtablis()) {
+	        	if(temp.lienEtabli()) {
 		        	int[] lienRecompense = temp.getRecompense();
 		        	if(lienRecompense != null) {
 			        	for(int i = 0; i < lienRecompense.length; ++i) {

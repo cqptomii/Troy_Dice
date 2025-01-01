@@ -63,7 +63,6 @@ public class Crieur extends Joueur {
 		}catch (IndexOutOfBoundsException e) {
 	        System.err.println("Erreur : Index hors limites lors du placement des dés : " + e.getMessage());
 	    }
-
 	    return indexes;
 	}
 	private void shuffleArray(int[] array) {
