@@ -3,25 +3,48 @@ import java.util.ArrayList;
 import core.Joueur;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+
+/**
+ * Cette classe modélise les feuilles de jeu
+ * 
+ * @version 1.0
+ *
+ * @see Lien
+ * @author Tom FRAISSE
+ */
 public class FeuilleDeJeu {
 	
 	private ArrayList<Quartier> quartiers;
-	private int[] indexSections;
 	private Joueur owner;
 	private IntegerProperty multOwned;
 	
 	private IntegerProperty scoreHabitant;
 	private IntegerProperty scoreFeuille;
 	
+	/** 
+	 * Cette méthode permet d'instancier une feuille de jeu
+	 *  
+	 * @param 		indexSections : Tableau contenant l'ordre des index des sections
+	 * @param 		j : Joueur associé à la feuille de jeu
+	 *	
+	 * @see FeuilleDeJeu#FeuilleDeJeu 
+	 * @author   Tom FRAISSE 
+	 */
 	public FeuilleDeJeu(int [] indexSections,Joueur j) {
 		this.scoreHabitant = new SimpleIntegerProperty(0);
 		this.scoreFeuille = new SimpleIntegerProperty(0);
-		this.indexSections = indexSections;
 		this.owner = j;
 		this.quartiers = new ArrayList<Quartier>();
 		this.multOwned = new SimpleIntegerProperty(0);
 		initQuartiers();
 	}
+	
+	/** 
+	 * Cette méthode permet de creer les différents quartiers de la feuille de jeu
+	 *	
+	 * @see FeuilleDeJeu#initQuartiers 
+	 * @author   Tom FRAISSE 
+	 */
 	private void initQuartiers() {
 		for (int colorB = 0; colorB < 3; colorB++) {
 			
@@ -152,12 +175,37 @@ public class FeuilleDeJeu {
             
 		}
 	}
+	
+	/** 
+	 * Cette méthode permet de mettre en place un lien dans la feuille de jeu
+	 *  
+	 * @param       rHab : nombre d'habitants en récompense
+	 * @param       colorH : couleur des habitants obtenus
+	 * @param       rCred :  nombre de crédit en récompense
+	 * @param       rCon : nombre de point de connaissance en récompense
+	 * @param       rExp : nombre de point d'experience en récompense
+	 * @param 		q : Quartier associé au lien
+	 * @param       batL : Premier batiment lié au lien
+	 * @param 		batR : Deuxième batiment lié au lien
+	 *	
+	 * @see FeuilleDeJeu#setLienBonusInModel 
+	 * @author   Tom FRAISSE 
+	 */
 	private void setLienBonusInModel(int rHab,int colorH,int rCred,int rCon,int rExp,Quartier q,Batiment bL,Batiment bR) {
 		Lien lien = new Lien(rHab,colorH,rCred,rCon,rExp,bL,bR);
 		bL.setBonusLien(lien);
 		bR.setBonusLien(lien);
         q.addLien(lien);
 	}
+	
+	/** 
+	 * Cette méthode permet de proteger une section de chacun des quartiers
+	 *	
+	 * @param 		index : section à proteger
+	 *
+	 * @see FeuilleDeJeu#protegerSection 
+	 * @author   Tom FRAISSE 
+	 */
 	public void protegerSection(int index) {
         for (Quartier q : this.quartiers) {
            Section s = q.getSection(index);
@@ -167,16 +215,45 @@ public class FeuilleDeJeu {
         }
 	}
 	
+	/** 
+	 * Cette méthode permet de détruire une section précise d'un quartier
+	 * 
+	 * @param 		color : couleur du quartier ciblé
+	 * @param 		index : section ciblé
+	 *
+	 * @see FeuilleDeJeu#detruireSection 
+	 * @author   Tom FRAISSE 
+	 */
 	public void detruireSection(int color, int index) {
 		// Rechercher la section et la détruire
 		Quartier q = this.quartiers.get(color);
 		Section s = q.getSection(index);
 		s.detruireSection();
 	}
+	
+	/** 
+	 * Cette méthode permet de verifier si une section précise est protegé
+	 * 
+	 * @return True : section protegé / False : Sinon
+	 * @param 		color : couleur du quartier ciblé
+	 * @param 		index : section ciblé
+	 *
+	 * @see FeuilleDeJeu#isSectionProteger 
+	 * @author   Tom FRAISSE 
+	 */
 	public boolean isSectionProteger(int color,int index) {
 		Quartier q = this.quartiers.get(color);
 		return q.getSection(index).getProteger();
 	}
+	
+	/** 
+	 * Cette méthode permet de calculer le score de la feuille de jeu
+	 * 
+	 * @return score de la feuille de jeu
+	 *
+	 * @see FeuilleDeJeu#computeScore 
+	 * @author   Tom FRAISSE 
+	 */
 	public int computeScore() {
 		if(quartiers.size() == 0) {
 			return 0;
@@ -195,12 +272,38 @@ public class FeuilleDeJeu {
 		return scoreFeuille.get() + scoreHabitant.get();
 	}
 	
+	/** 
+	 * Cette méthode permet d'obtenir l'instance IntegerProperty lié au score de la feuille
+	 * 
+	 * @return Instance de la propriété observable lié au score de la feuille
+	 *
+	 * @see FeuilleDeJeu#scoreFeuilleProperty 
+	 * @author   Tom FRAISSE 
+	 */
 	public IntegerProperty scoreFeuilleProperty(){
 		return this.scoreFeuille;
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir l'instance IntegerProperty lié au score des habitants
+	 * 
+	 * @return Instance de la propriété observable lié au score des habitants
+	 *
+	 * @see FeuilleDeJeu#scoreHabitantProperty 
+	 * @author   Tom FRAISSE 
+	 */
 	public IntegerProperty scoreHabitantProperty() {
 		return this.scoreHabitant;
 	}
+	
+	/** 
+	 * Cette méthode permet d'otenir le montant du multiplicateur appliqué au différents batiments
+	 * 
+	 * @return multiplicateur appliqué
+	 *
+	 * @see FeuilleDeJeu#getMultOwned 
+	 * @author   Tom FRAISSE 
+	 */
 	public int getMultOwned() {
 		if(this.multOwned.get() == 0) {
 			return 0;
@@ -213,15 +316,50 @@ public class FeuilleDeJeu {
 			return 3;
 		}
 	}
+	
+	/** 
+	 * Cette méthode permet d'ajouter un multiplicateur au nombre de multiplicateur obtenu
+	 * 
+	 * @see FeuilleDeJeu#addMult 
+	 * @author   Tom FRAISSE 
+	 */
 	protected void addMult() {
 		this.multOwned.set(multOwned.get()+1);
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir l'instance IntegerProperty lié au nombre de multiplicateur
+	 * 
+	 * @return Instance de la propriété observable lié au nombre de multiplicateur
+	 *
+	 * @see FeuilleDeJeu#multOwnedProperty 
+	 * @author   Tom FRAISSE 
+	 */
 	public IntegerProperty multOwnedProperty() {
 		return this.multOwned;
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir un des quartier de la feuille
+	 *
+	 * @return Instance du quartier de la couleur ciblé
+	 * @param 		color : couleur du quartier ciblé
+	 *
+	 * @see FeuilleDeJeu#getQuartier 
+	 * @author   Tom FRAISSE 
+	 */
 	public Quartier getQuartier(int color) {
 		return this.quartiers.get(color);
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir l'instance du joueur associé à la feuille de jeu
+	 * 
+	 * @return Instance du joueur
+	 *
+	 * @see FeuilleDeJeu#getJoueur 
+	 * @author   Tom FRAISSE 
+	 */
 	public Joueur getJoueur() {
 		return this.owner;
 	}

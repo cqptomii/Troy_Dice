@@ -1,5 +1,13 @@
 package feuille;
 
+/**
+ * Classe modélisant les batiments de Prestige
+ * 
+ * @version 1.0
+ *
+ * @see Prestige
+ * @author Tom FRAISSE
+ */
 public class Prestige extends Batiment {
 	/*
 	 * 1 - Protection de la section
@@ -18,6 +26,23 @@ public class Prestige extends Batiment {
 	private boolean multiplicateur;
 	private int indexMult;
 	
+	/** 
+	 * Cette méthode permet d'instancier un batiment de travail
+	 *  
+	 * @param       parent : Feuille de jeu associé au batiment 
+	 * @param       name : Nom du batiment 
+	 * @param		nombreHabitants : nombre d'habitant du batiment
+	 * @param 		colorH : Couleur des habitants
+	 * @param 		bonus : index du bonus 
+	 * @param 		recompense : montant des récompense de batiment
+	 * @param 		colorDe : couleur du dé multiplicateur
+	 * @param 		multiplicateur : état du multiplicateur (True : activé / False : desactivé)
+	 * @param		indexMult : index de la section multiplié
+	 * @param       colorB : couleur du batiment
+	 * 
+	 * @see Prestige#Prestige
+	 * @author  Tom FRAISSE 
+	 */
 	public Prestige(FeuilleDeJeu parent,String name, int nombreHabitants,int colorH,int bonus,int [] recompense,int colorDe,boolean multiplicateur,int indexMult,int colorB) {
 		super(parent,name, nombreHabitants,colorH,colorB);
 		if(bonus >=1 && bonus <=3)
@@ -28,6 +53,14 @@ public class Prestige extends Batiment {
 		this.colorDeMult = colorDe;
 	}
 	
+	/** 
+	 * Cette méthode permet de construire le batiment
+	 *  
+	 * @param       nbDe : nombre de dé de la couleur de la place 
+	 * 
+	 * @see Prestige#construire
+	 * @author   Tom FRAISSE
+	 */
 	@Override
 	public void construire(int nbDe) {
 		//construire le batiment
@@ -53,12 +86,39 @@ public class Prestige extends Batiment {
 		
 		}
 	}
+	
+	/** 
+	 * Cette méthode permet de recuperer le montant des récompenses du batiment
+	 *  
+	 * @return Tableau contenant le montant des récompenses
+	 * 
+	 * @see Prestige#getRecompenseBonus
+	 * @author   Tom FRAISSE
+	 */
 	public int[] getRecompenseBonus() {
 		return this.recompenseBonus;
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir la couleur du dé lié au multiplicateur
+	 *  
+	 * @return couleur du dé
+	 * 
+	 * @see Prestige#getColorDe
+	 * @author   Tom FRAISSE
+	 */
 	public int getColorDe() {
 		return this.colorDeMult;
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir une chaine de caractère qui décrite le batiment
+	 *  
+	 * @return Chaine de caractère 
+	 * 
+	 * @see Prestige#toString
+	 * @author   Tom FRAISSE
+	 */
 	public String toString() {
 		String temp = new String(super.toString() + "Bonus : " + this.bonus);
 		System.out.println(temp);
