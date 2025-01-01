@@ -29,14 +29,19 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import plateau.De;
 import plateau.Place;
-
 import java.util.Optional;
-
 import core.*;
 import feuille.FeuilleDeJeu;
 import feuille.Quartier;
 
-
+/**
+ * Cette classe modélise le controller de la scene de jeu principale
+ * 
+ * @version 1.0
+ *
+ * @see GameController
+ * @author Tom FRAISSE
+ */
 public class GameController {
 
     private Interface mainApp;
@@ -45,8 +50,18 @@ public class GameController {
     private Simulation gameMode;
     private Crieur crieur;
     private boolean isGameOver;
-    
     private VBox choisirDe;
+    
+    /** 
+	 * Cette méthode permet d'instancier le controller de la scene Menu
+	 *  
+	 * @param		app : Instance de l'objet qui affiche l'interface graphique
+	 * @param		stage : Stage courant
+	 * @param		crieur : Instance vers le crieur
+	 * 
+	 * @see GameController#GameController 
+	 * @author Tom FRAISSE
+	 */
     public GameController(Interface app,Stage primaryStage,Crieur crieur) {
         this.mainApp = app;
         this.primaryStage = primaryStage;
@@ -55,6 +70,13 @@ public class GameController {
         this.isGameOver = false;
         createScene();
     }
+    
+    /** 
+	 * Cette méthode permet de creer la scène global de la partie
+	 *  
+	 * @see GameController#createScene 
+	 * @author Tom FRAISSE
+	 */
     private void createScene() {
         StackPane root = new StackPane();
         
@@ -77,7 +99,12 @@ public class GameController {
 	    tour.textProperty().addListener((obs,lastValue,newValue) ->{
 	    	if (this.gameMode.getTour() >= 9) {
 	    	    this.isGameOver = true;
-	    	    this.mainApp.showEndScene();
+	    	    try {
+					this.mainApp.showEndScene();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	    	    return;
 	    	}
 	    });
@@ -251,9 +278,24 @@ public class GameController {
         });
     }
 
+    /** 
+	 * Cette méthode permet de creer la scène global de la partie
+	 *  
+	 * @see GameController#createScene 
+	 * @author Tom FRAISSE
+	 */
     public Scene getScene() {
     	return this.scene;
     }
+    
+    /** 
+	 * Cette méthode permet de creer la boite de modification de dé
+	 *  
+	 * @return : boite contenant l'affichage de la modification de dé 
+	 *  
+	 * @see GameController#drawToolDe 
+	 * @author Tom FRAISSE
+	 */
     private VBox drawToolDe() {
     	VBox temp = new VBox(10);
     	temp.setAlignment(Pos.CENTER);
@@ -390,6 +432,17 @@ public class GameController {
 
         return temp;
     }
+    
+    /** 
+	 * Cette méthode permet de mettre à jour le groupe des places du plateau
+	 *  
+	 * @param		bounds : proprietées du plateau actuel
+	 * @param		plateauGroup : groupe
+	 * @param		imageViewPlateau : image du plateau de jeu
+	 *  
+	 * @see GameController#updatePlateauGroup 
+	 * @author Tom FRAISSE
+	 */
     private void updatePlateauGroup(Bounds bounds, Group plateauGroup, ImageView imageViewPlateau, Place[] places, int nombreImages) {
         double displayedWidth = bounds.getWidth();
         double displayedHeight = bounds.getHeight();
@@ -420,6 +473,18 @@ public class GameController {
             plateauGroup.getChildren().add(placeGroup);
         }
     }
+    
+    /** 
+	 * Cette méthode permet d'afficher une place dans la scene
+	 * 
+	 * @return Boutton représentant la place du plateau
+	 * @param 		p : place à afficher
+	 * @param 		x : position x de la place à afficher
+	 * @param 		y : position y e la place à afficher
+	 *  
+	 * @see GameController#drawPlace 
+	 * @author Tom FRAISSE
+	 */
     private Button drawPlace(Place p, double x, double y) {
         Button placeButton = new Button();
         
@@ -443,6 +508,16 @@ public class GameController {
 
         return placeButton;
     }
+    
+    /** 
+	 * Cette méthode permet de mettre à jour l'image d'une place
+	 *  
+	 * @param		placeButton : Button à modifier
+	 * @param 		p : place lié aux boutons
+	 *  
+	 * @see GameController#updateButtonBackground 
+	 * @author Tom FRAISSE
+	 */
     private void updateButtonBackground(Button placeButton, Place p) {
         String imageUrl;
         
@@ -461,6 +536,18 @@ public class GameController {
                              "-fx-min-width: 100;" + 
                              "-fx-min-height: 100;");
     }
+    
+    /** 
+	 * Cette méthode permet d'afficher un dé sur l'interface graphique
+	 * 
+	 * @return : ImageView du dé affichable sur l'interface graphique
+	 * @param 		p : Instance du De à afficher
+	 * @param 		x : Position x du dé à afficher
+	 * @param		y : Position y du dé à afficher
+	 *  
+	 * @see GameController#drawDe 
+	 * @author Tom FRAISSE
+	 */
     private ImageView drawDe(De p, double x, double y) {
         if (p == null) {
             return null;
@@ -476,6 +563,16 @@ public class GameController {
 
         return de;
     }
+    
+    /** 
+	 * Cette méthode permet de charger correspondant au dé donner en paramètre
+	 *  
+	 * @return Image du dé chargé
+	 * @param		p : Instance du dé 
+	 *  
+	 * @see GameController#loadDeImage 
+	 * @author Tom FRAISSE
+	 */
     private Image loadDeImage(De p) {
         int color = p.getCouleur();
         int valeur = p.getValeur();
@@ -495,6 +592,15 @@ public class GameController {
         }
     }
     
+    /** 
+	 * Cette méthode permet d'afficher le feuille de jeu
+	 * 
+	 * @return : VBox contenant la feuille de jeu
+	 * @param		imageViewFeuille: imageView contenant l'image de fond de la feuille
+	 * 
+	 * @see GameController#drawFeuille 
+	 * @author Tom FRAISSE
+	 */
     private VBox drawFeuille(ImageView imageViewFeuille) {
     	HBox quartierBox1 = this.drawQuartier(0);
         HBox quartierBox2 = this.drawQuartier(1);
@@ -506,6 +612,16 @@ public class GameController {
         feuilleBox.setPadding(new Insets(30,0,0,0));
         return feuilleBox;
     }
+   
+    /** 
+	 * Cette méthode permet d'afficher le montant d'une ressource sur l'écran
+	 * 
+	 * @return : HBox contenant l'affichage des ressources
+	 * @param		type : type de ressource à afficher
+	 *  
+	 * @see GameController#drawRessource 
+	 * @author Tom FRAISSE
+	 */
     private HBox drawRessource(int type){
     	HBox ressourceBox = new HBox(20);
     	
@@ -540,6 +656,16 @@ public class GameController {
     	
     	return ressourceBox;
     }
+   
+    /** 
+	 * Cette méthode permet d'afficher un quartier sur l'écran
+	 * 
+	 * @return : HBox contenant l'affichage du quartier
+	 * @param		color : couleur du quartier à afficher
+	 *  
+	 * @see GameController#drawQuartier 
+	 * @author Tom FRAISSE
+	 */
     private HBox drawQuartier(int color) {
         HBox quartierBox = new HBox(0);
         quartierBox.setPrefHeight(50);
@@ -556,6 +682,17 @@ public class GameController {
         bottomBox.prefWidthProperty().bind(quartierBox.prefWidthProperty());
         return quartierBox;
     }
+    
+    /** 
+	 * Cette méthode permet d'afficher la partie supérieur du quartier
+	 * 
+	 * @return : HBox contenant l'affichage de la partie supérieur du quartier
+	 * @param		color : couleur du quartier à afficher
+	 * @param 		parentBox : Boite parente
+	 *  
+	 * @see GameController#createTopBox 
+	 * @author Tom FRAISSE
+	 */
     private HBox createTopBox(int color, HBox parentBox) {
         HBox topBox = new HBox(0);
 
@@ -571,6 +708,16 @@ public class GameController {
         topBox.getChildren().addAll(imageViewStaticPart, batBox);
         return topBox;
     }
+    
+    /** 
+	 * Cette méthode permet d'afficher les boutons représentant les différents batiments du quartier
+	 * 
+	 * @return : GridPane contenant les boutons
+	 * @param		color : couleur du quartier et des batiments
+	 *  
+	 * @see GameController#drawBatimentButton 
+	 * @author Tom FRAISSE
+	 */
     private GridPane drawBatimentButton(int color) {
     	String [] colorArray = {"Orange","Bleu","Gris"};
     	GridPane boutonPane = new GridPane();
@@ -675,6 +822,18 @@ public class GameController {
         
         return boutonPane;
     }
+    
+    /** 
+	 * Cette méthode permet de charger les image qui vont contenir les index des sections
+	 *  
+	 * @return : ImageView 
+	 * @param		state : état de la section (protegé / detruit)
+	 * @param		right : type d'image à charger
+	 * @param 		color : couleur de l'image d'index à afficher 
+	 *  
+	 * @see GameController#loadIndexImage 
+	 * @author Tom FRAISSE
+	 */
     private ImageView loadIndexImage(boolean state,boolean right,int color) {
     	String imageUrl = "/images/";
     	
@@ -696,6 +855,19 @@ public class GameController {
         
         return imageViewIndex;
     }
+    
+    /** 
+	 * Cette méthode permet d'obtenir le chemin vers l'image du batiment à charger
+	 * 
+	 * @return  : Chemin relatif vers le fichier image
+	 * @param		state : état du batiment (détruit / constructible)
+	 * @param		prestige : type du batiment
+	 * @param		color : couleur du batiment à charger
+	 * @param 		index : numéro lié au batiment à charger
+	 * 
+	 * @see GameController#loadBatimentImage 
+	 * @author Tom FRAISSE
+	 */
     private String loadBatimentImage(int state, boolean prestige,int color, int index) {
     	String imageUrl = "/images/batiments/";
     	
@@ -717,6 +889,16 @@ public class GameController {
     	return imageUrl;
     }
     
+    /** 
+	 * Cette méthode permet de créer boite contenant l'affichage des ressource
+	 * 
+	 * @return : StackPane contenant la boite de ressource
+	 * @param 		color : couleur du quartier
+	 * @param		parentBox : boite parente
+	 *  
+	 * @see GameController#createBottomBox 
+	 * @author Tom FRAISSE
+	 */
     private StackPane createBottomBox(int color, HBox parentBox) {
         StackPane bottomBox = new StackPane();
 
@@ -734,6 +916,17 @@ public class GameController {
         StackPane.setMargin(affichageRessource, new Insets(5,0,0,90));
         return bottomBox;
     }
+    
+    /** 
+	 * Cette méthode permet de créer la boite d'affichage du score
+	 *  
+	 * @return : VBox contenant la boite d'affichage du score
+	 * @param		color : couleur du quartier
+	 * @param		parentBox : boite parente
+	 *  
+	 * @see GameController#createScoreBox 
+	 * @author Tom FRAISSE
+	 */
     private VBox createScoreBox(int color, HBox parentBox) {
         VBox scoreBox = new VBox(0);
 
@@ -759,6 +952,19 @@ public class GameController {
 
         return scoreBox;
     }
+    
+    /** 
+	 * Cette méthode permet de mettre à jour l'affichage des score sur la feuille de jeu
+	 * 
+	 * @param 		scoreBox : Boite d'affichage du score
+	 * @param		tempFeuille : Feuille de jeu affiché
+	 * @param		tempQuartier : Quartier de jeu affiché
+	 * @param		color : couleur du quartier
+	 * @param 		imageViewScorePVide : imageView de la partie vide de la boite d'affichage
+	 *  
+	 * @see GameController#updateScorePanes 
+	 * @author Tom FRAISSE
+	 */
     private void updateScorePanes(VBox scoreBox, FeuilleDeJeu tempFeuille, Quartier tempQuartier, int color, ImageView imageViewScorePVide) {
         int scoreMultiplicateur = tempFeuille.getMultOwned();
 
@@ -782,6 +988,17 @@ public class GameController {
         // Mettre à jour les enfants du VBox
         scoreBox.getChildren().setAll(imageViewScorePVide, prestigePane, travailPane, ressourcePane);
     }
+   
+    /** 
+	 * Cette méthode permet de creer boite d'affichage du score lié aux ressources
+	 * 
+	 * @return : StackPane contenant l'affichage du score
+	 * @param		imagePath : Chemin relatif vers l'image à charger
+	 * @param		scoreTextProperty : valeur du score à afficher dans la boite de dialogue
+	 *  
+	 * @see GameController#createScorePaneRessource 
+	 * @author Tom FRAISSE
+	 */
     private StackPane createScorePaneRessource(String imagePath, StringExpression  scoreTextProperty) {
         Image image = new Image(getClass().getResource(imagePath).toExternalForm());
         ImageView imageView = new ImageView(image);
@@ -799,6 +1016,18 @@ public class GameController {
         StackPane.setMargin(imageView, new Insets(-3,0,0,-45));
         return scorePane;
     }
+    
+    /** 
+	 * Cette méthode permet de creer boite d'affichage du score lié aux batiments
+	 * 
+	 * @return : StackPane contenant l'affichage du score
+	 * @param		imagePath : Chemin relatif vers l'image à charger
+	 * @param		multiplierText : valeur du multiplicateur à afficher
+	 * @param		scoreTextProperty : valeur du score à afficher dans la boite de dialogue
+	 *  
+	 * @see GameController#createScorePane 
+	 * @author Tom FRAISSE
+	 */
     private StackPane createScorePane(String imagePath, String multiplierText, StringExpression  scoreTextProperty) {
         Image image = new Image(getClass().getResource(imagePath).toExternalForm());
         ImageView imageView = new ImageView(image);
@@ -818,6 +1047,16 @@ public class GameController {
         StackPane.setMargin(scoreDisplay, new Insets(8,0,0,30));
         return scorePane;
     }
+    
+    /** 
+	 * Cette méthode permet de creer la boite d'affichage des pions
+	 * 
+	 * @return : HBox contenant les différents composants
+	 * @param		imageViewFeuille : imageView contenant l'image de fond de la feuille de jeu
+	 *  
+	 * @see GameController#drawPionBox 
+	 * @author Tom FRAISSE
+	 */
     private HBox drawPionBox(ImageView imageViewFeuille) {
     	Image imageB1 = new Image(getClass().getResource("/images/B1.png").toExternalForm());
         ImageView imageViewB1 = new ImageView(imageB1);
@@ -878,6 +1117,15 @@ public class GameController {
         HBox bottomBox = new HBox(10,imageViewB1,habitantPane,temp);
         return bottomBox;
     }
+    
+    /** 
+	 * Cette méthode permet de créer les images pour représenter l'obtention des habitants
+	 * 
+	 * @return : GridPane contenant les images sur chaque habitants
+	 *  
+	 * @see GameController#drawHabitant 
+	 * @author Tom FRAISSE
+	 */
     private GridPane drawHabitant() {
     	GridPane habitantPane = new GridPane();
     	habitantPane.setPadding(new Insets(38,0,0,8));
@@ -908,6 +1156,16 @@ public class GameController {
     	
     	return updateHabitant(habitantPane);
     }
+    
+    /** 
+	 * Cette méthode permet de mettre à jour l'affichage de l'obtention d'habitant
+	 * 
+	 * @return : GridPane contenant les images sur chaque habitants
+	 * @param 		pane : Boite contenant les différents images avant mise à jour
+	 *  
+	 * @see GameController#updateHabitant 
+	 * @author Tom FRAISSE
+	 */
     private GridPane updateHabitant(GridPane pane) {
     	GridPane tempPane = pane;
     	
@@ -929,6 +1187,19 @@ public class GameController {
     	}
     	return tempPane;
     }
+    
+    /** 
+	 * Cette méthode permet de créer une alerte sur l'écran avec un texte
+	 * 
+	 * @return : Instance de l'alerte
+	 * @param 		title : titre de l'alerte
+	 * @param		header : contenu en haut de l'alerte
+	 * @param		content : contenu de l'alerte
+	 * @param		type : type de l'alerte créer
+	 *  
+	 * @see GameController#createAlert 
+	 * @author Tom FRAISSE
+	 */
     private Alert createAlert(String title, String header, String content,int type) {
     	Alert alert;
     	if(type == 1) {
@@ -942,6 +1213,17 @@ public class GameController {
          
         return alert;
     }
+    
+    /** 
+	 * Cette méthode permet de mettre à jour les boutons pour qu'ils prennent en compte l'alerte
+	 * 
+	 * @param		button : bouton à mettre à jour 
+	 * @param		title : titre de l'alerte
+	 * @param		header : header de l'alerte
+	 *  
+	 * @see GameController#setupButtonWithAlert 
+	 * @author Tom FRAISSE
+	 */
     public void setupButtonWithAlert(Button button,String title, String header) {
         Timeline hoverTimer = new Timeline();
         hoverTimer.setCycleCount(1);
@@ -965,6 +1247,15 @@ public class GameController {
             hoverTimer.stop();
         });
     }
+    
+    /** 
+	 * Cette méthode permet d'afficher l'alerte afin de choisir le type de ressource à utiliser
+	 * 
+	 * @param 		p : Place lié l'activation de l'alerte
+	 *  
+	 * @see GameController#showRessourceChoice 
+	 * @author Tom FRAISSE
+	 */
     private void showRessourceChoice(Place p) {
 
     	Alert alert = this.createAlert("Choix type de ressource", "Veuillez choisir le type de ressource à utiliser.", "Quel est votre choix ?", 1);

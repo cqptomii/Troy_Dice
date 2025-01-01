@@ -13,15 +13,40 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Cette classe modélise le controller de la scene de fin
+ * 
+ * @version 1.0
+ *
+ * @see EndController
+ * @author Tom FRAISSE
+ */
 public class EndController {
 	private Stage primaryStage;
 	private Simulation gameMode;
 	private Scene scene;
+	
+	
+	/** 
+	 * Cette méthode permet d'instancier le controller de la scene de fin
+	 *  
+	 * @param		stage : Stage courant
+	 * 
+	 * @see EndController#EndController 
+	 * @author Tom FRAISSE
+	 */
 	public EndController(Stage primaryStage) {
 		this.primaryStage = primaryStage;
 		this.gameMode = Simulation.getInstance();
 		this.createScene();
 	}
+	
+	/** 
+	 * Cette méthode permet de créer la scène de fin
+	 *  
+	 * @see EndController#createScene 
+	 * @author Tom FRAISSE
+	 */
 	private void createScene() {
 		StackPane root = new StackPane();
 		
@@ -62,9 +87,29 @@ public class EndController {
             primaryStage.setY((screenHeight - newHeight.doubleValue()) / 2);
         });
 	}
+	
+	/** 
+	 * Cette méthode permet d'obtenir la scene de fin de partie
+	 *  
+	 * @return : Instance de la scene de fin de partie
+	 * 
+	 * @see EndController#getScene 
+	 * @author Tom FRAISSE
+	 */
 	public Scene getScene() {
 		return this.scene;
 	}
+	
+	/** 
+	 * Cette méthode permet de creer la boite d'affiche du score d'un joueur
+	 *  
+	 * @return : Boite d'affichage des score
+	 * @param		j : Joueur à utiliser
+	 * @param		winner : état si le joueur est le gagnant ou pas
+	 * 
+	 * @see EndController#createPlayerField 
+	 * @author Tom FRAISSE
+	 */
 	private HBox createPlayerField(Joueur j,boolean winner) {
 		HBox playerBox = new HBox();
 		playerBox.setSpacing(10);

@@ -11,19 +11,41 @@ import javafx.stage.Stage;
 import core.Crieur;
 import core.Simulation;
 
+
+/**
+ * Cette classe modélise le controller de la saisi des joueurs
+ * 
+ * @version 1.0
+ *
+ * @see SaisiJoueurController
+ * @author Tom FRAISSE
+ */
 public class SaisiJoueurController {
     private Interface mainApp;
-    private Stage stage;
     private Simulation gameMode;
     private Scene scene;
 
+    /** 
+	 * Cette méthode permet d'instancier le controller de la scene de saisi des joueurs
+	 *  
+	 * @param		mainApp : Instance de l'objet qui affiche l'interface graphique
+	 * @param		stage : Stage courant
+	 * 
+	 * @see SaisiJoueurController#SaisiJoueurController 
+	 * @author Tom FRAISSE
+	 */
     public SaisiJoueurController(Interface mainApp, Stage stage) {
         this.mainApp = mainApp;
-        this.stage = stage;
         this.gameMode = Simulation.getInstance();
         createScene();
     }
-
+    
+    /** 
+	 * Cette méthode permet de créer la scène de saisi des joueurs
+	 *  
+	 * @see SaisiJoueurController#createScene 
+	 * @author Tom FRAISSE
+	 */
     private void createScene() {
     	Label error = new Label("");
     	error.setStyle("-fx-text-fill: red;");
@@ -67,6 +89,14 @@ public class SaisiJoueurController {
         this.scene = new Scene(layout, 400, 400);
     }
 
+    /** 
+	 * Cette méthode permet d'obtenir la scene de saisi des joueurs
+	 *  
+	 * @return : Instance de la scene de saisi des joueurs
+	 * 
+	 * @see SaisiJoueurController#getScene 
+	 * @author Tom FRAISSE
+	 */
     public Scene getScene() {
         return this.scene;
     }

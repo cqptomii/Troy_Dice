@@ -13,6 +13,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+
+/**
+ * Cette classe modélise le controller de la scene de mode jeu
+ * 
+ * @version 1.0
+ *
+ * @see ModeJeuController
+ * @author Tom FRAISSE
+ */
 public class ModeJeuController {
 	private Interface mainApp;
     private Stage stage;
@@ -20,6 +29,16 @@ public class ModeJeuController {
     private Simulation gameMode;
     private Crieur nomCrieur;
     
+    
+    /** 
+	 * Cette méthode permet d'instancier le controller de la scene de choix de mode de jeu
+	 *  
+	 * @param		mainApp : Instance de l'objet qui affiche l'interface graphique
+	 * @param		stage : Stage courant
+	 * 
+	 * @see ModeJeuController#ModeJeuController 
+	 * @author Tom FRAISSE
+	 */
     public ModeJeuController(Interface mainApp, Stage stage,Crieur nomCrieur) {
         this.mainApp = mainApp;
         this.stage = stage;
@@ -27,7 +46,13 @@ public class ModeJeuController {
         this.nomCrieur = nomCrieur;
         createSceneMode();
     }
-
+    
+    /** 
+	 * Cette méthode permet de créer la scène du choix du mode de jeu de la partie
+	 *  
+	 * @see ModeJeuController#createSceneMode 
+	 * @author Tom FRAISSE
+	 */
     private void createSceneMode() {	
 		Label crieurBanner = new Label("Le crieur est :" + nomCrieur.getName());
 		crieurBanner.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 10;");
@@ -61,6 +86,13 @@ public class ModeJeuController {
 		root.setCenter(gLayout);
 		this.scene = new Scene(root,400,400);
     }
+    
+    /** 
+	 * Cette méthode permet de creer la scène du choix de l'ordre des sections des feuilles de jeu
+	 *  
+	 * @see ModeJeuController#createSceneFeuille
+	 * @author Tom FRAISSE
+	 */
     private void createSceneFeuille() {
     	Label title = new Label(this.nomCrieur.getName() + " choisis l'ordre des sections des feuilles de jeu");
     	title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 10;");
@@ -107,6 +139,16 @@ public class ModeJeuController {
 		
 		this.scene = new Scene(root,400,400);
     }
+    
+    /** 
+	 * Cette méthode permet de choisir le mode de jeu de la partie
+	 * 
+	 * @param		event : evenement
+	 * @param 		mode : mode de jeu choisi
+	 * 
+	 * @see ModeJeuController#onChoisirMode 
+	 * @author Tom FRAISSE
+	 */
     public void onChoisirMode(ActionEvent event, int mode) {
     	if(mode==0) { // ordonnée
     		this.onChoisirOrdre(event, 2, 1);
@@ -118,6 +160,17 @@ public class ModeJeuController {
     		this.onChoisirOrdre(event, -1, 1);
     	}
     }
+    
+    /** 
+	 * Cette méthode permet de choisir l'ordre des sections des feuilles de jeu
+	 * 
+	 * @param 		event : evenement
+	 * @param 		ordre : odre de classement des sections
+	 * @param 		value : valeur du dé tiré
+	 *  
+	 * @see ModeJeuController#onChoisirOrdre 
+	 * @author Tom FRAISSE
+	 */
     public void onChoisirOrdre(ActionEvent event, int ordre,int value) {
     	
     	/*
@@ -126,12 +179,36 @@ public class ModeJeuController {
     	this.gameMode.setIndexFeuille(value, ordre);
     	this.gameMode.initPartie();
     	// Lancer la fenêtre du jeu
-    	this.mainApp.showGameScene();
+    	try {
+			this.mainApp.showGameScene();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
+    
+    /** 
+	 * Cette méthode permet de lancer un dé et de l'afficher dans la fenetre
+	 * 
+	 * @param		event : evenement
+	 * @param 		de : label contenant la valeu du dé
+	 *  
+	 * @see ModeJeuController#onLancerDe 
+	 * @author Tom FRAISSE
+	 */
     public void onLancerDe(ActionEvent event, Label de) {
     	int value = nomCrieur.lancerDe();
     	de.setText(""+value);
     }
+    
+    /** 
+	 * Cette méthode permet d'obtenir la scene du controller
+	 *  
+	 * @return : Instance de la scene du choix du controller
+	 * 
+	 * @see ModeJeuController#getScene 
+	 * @author Tom FRAISSE
+	 */
     public Scene getScene() {
         return this.scene;
     }
