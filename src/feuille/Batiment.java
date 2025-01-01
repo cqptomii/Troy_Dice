@@ -5,7 +5,7 @@ package feuille;
  * 
  * @version 1.0
  *
- * @see Batiments
+ * @see Batiment
  * @author Tom FRAISSE
  */
 public abstract class Batiment {

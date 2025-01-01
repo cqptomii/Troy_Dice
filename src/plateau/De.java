@@ -2,6 +2,7 @@ package plateau;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+
 /**
  * Cette classe modélise un dé de jeu 
  * 
@@ -10,7 +11,6 @@ import javafx.beans.property.SimpleIntegerProperty;
  * @see De
  * @author Tom FRAISSE
  */
-
 public class De {
 	
 	private IntegerProperty valeur; /* valeur du dé : 1 - 6 */

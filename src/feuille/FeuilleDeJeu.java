@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleIntegerProperty;
  * 
  * @version 1.0
  *
- * @see Lien
+ * @see FeuilleDeJeu
  * @author Tom FRAISSE
  */
 public class FeuilleDeJeu {
