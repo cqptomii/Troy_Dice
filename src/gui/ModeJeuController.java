@@ -8,8 +8,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -53,7 +56,15 @@ public class ModeJeuController {
 	 * @see ModeJeuController#createSceneMode 
 	 * @author Tom FRAISSE
 	 */
-    private void createSceneMode() {	
+    private void createSceneMode() {
+    	
+    	Image backgroundImage = new Image(getClass().getResource("/images/menu_background2.png").toExternalForm());
+    	
+    	ImageView backgroundView = new ImageView(backgroundImage);
+    	backgroundView.setPreserveRatio(false);
+        backgroundView.setFitWidth(800);
+        backgroundView.setFitHeight(600); 
+    	
 		Label crieurBanner = new Label("Le crieur est :" + nomCrieur.getName());
 		crieurBanner.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 10;");
 
@@ -81,10 +92,13 @@ public class ModeJeuController {
 	    VBox.setMargin(title, new Insets(10));
 	    VBox.setMargin(bLayout, new Insets(10));
 	    
-	    BorderPane root = new BorderPane();
+	    BorderPane border = new BorderPane();
 	    
-		root.setCenter(gLayout);
-		this.scene = new Scene(root,400,400);
+	    border.setCenter(gLayout);
+		
+		StackPane root = new StackPane(backgroundView,border);
+        
+        this.scene = new Scene(root, 800, 600);
     }
     
     /** 
@@ -94,6 +108,14 @@ public class ModeJeuController {
 	 * @author Tom FRAISSE
 	 */
     private void createSceneFeuille() {
+    	
+    	Image backgroundImage = new Image(getClass().getResource("/images/menu_background2.png").toExternalForm());
+    	
+    	ImageView backgroundView = new ImageView(backgroundImage);
+    	backgroundView.setPreserveRatio(false);
+        backgroundView.setFitWidth(800);
+        backgroundView.setFitHeight(600); 
+    	
     	Label title = new Label(this.nomCrieur.getName() + " choisis l'ordre des sections des feuilles de jeu");
     	title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 10;");
 		
@@ -133,11 +155,13 @@ public class ModeJeuController {
 	    VBox.setMargin(deLayout, new Insets(10));
 	    VBox.setMargin(bLayout, new Insets(10));
 		
-	    BorderPane root = new BorderPane();
+	    BorderPane border = new BorderPane();
 	    
-		root.setCenter(vLayout);
+		border.setCenter(vLayout);
 		
-		this.scene = new Scene(root,400,400);
+		StackPane root = new StackPane(backgroundView,border);
+        
+        this.scene = new Scene(root, 800, 600);
     }
     
     /** 

@@ -24,7 +24,7 @@
 
 /* Style spécifique pour un bouton avec une ID */
 #menuButton {
-    -fx-background-color: #4CAF50; /* Vert */
+    -fx-background-color: #2a9df4; /* Vert */
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }

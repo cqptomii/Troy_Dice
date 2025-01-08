@@ -6,6 +6,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import core.Crieur;
@@ -47,6 +50,14 @@ public class SaisiJoueurController {
 	 * @author Tom FRAISSE
 	 */
     private void createScene() {
+    	
+    	Image backgroundImage = new Image(getClass().getResource("/images/menu_background2.png").toExternalForm());
+    	
+    	ImageView backgroundView = new ImageView(backgroundImage);
+    	backgroundView.setPreserveRatio(false);
+        backgroundView.setFitWidth(800);
+        backgroundView.setFitHeight(600); 
+    	
     	Label error = new Label("");
     	error.setStyle("-fx-text-fill: red;");
         Label nameLabel = new Label("Entrez le nom du joueur :");
@@ -78,7 +89,8 @@ public class SaisiJoueurController {
                 error.setText("Erreur : données invalides !");
             }
         });
-
+        validateButton.setId("menuButton");
+        
         VBox layout = new VBox(10, nameLabel,
         		nameField, gpaLabel, gpaField, 
         		error, validateButton
@@ -86,7 +98,12 @@ public class SaisiJoueurController {
             layout.setAlignment(Pos.CENTER);
             layout.setPadding(new Insets(20));
 
-        this.scene = new Scene(layout, 400, 400);
+        StackPane root = new StackPane(backgroundView,layout);
+        this.scene = new Scene(root, 800, 600);
+        
+        scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+        backgroundView.fitWidthProperty().bind(scene.widthProperty());
+        backgroundView.fitHeightProperty().bind(scene.heightProperty());
     }
 
     /** 

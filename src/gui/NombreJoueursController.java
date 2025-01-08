@@ -6,6 +6,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -45,6 +48,14 @@ public class NombreJoueursController {
 	 * @author Tom FRAISSE
 	 */
     private void createScene() {
+    	
+    	Image backgroundImage = new Image(getClass().getResource("/images/menu_background2.png").toExternalForm());
+    	
+    	ImageView backgroundView = new ImageView(backgroundImage);
+    	backgroundView.setPreserveRatio(false);
+        backgroundView.setFitWidth(800);
+        backgroundView.setFitHeight(600); 
+    	
         Label instruction = new Label("Entrez le nombre de joueurs (2-6) :");
         Label error = new Label();
         TextField input = new TextField();
@@ -68,12 +79,19 @@ public class NombreJoueursController {
                 error.setText("Entrez un nombre valide entre 2 et 6");
             }
         });
-
+        validateButton.setId("menuButton");
+        
         VBox layout = new VBox(10, instruction, input, validateButton, error);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(20));
- 
-        this.scene = new Scene(layout, 400, 400);
+        
+        StackPane root = new StackPane(backgroundView,layout);
+        this.scene = new Scene(root, 800, 600);
+        
+        scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+        backgroundView.fitWidthProperty().bind(scene.widthProperty());
+        backgroundView.fitHeightProperty().bind(scene.heightProperty());
+        input.prefWidthProperty().bind(scene.widthProperty().multiply(0.5));
     }
 
     /** 
