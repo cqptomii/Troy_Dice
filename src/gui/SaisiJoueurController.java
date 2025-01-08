@@ -59,10 +59,14 @@ public class SaisiJoueurController {
         backgroundView.setFitHeight(600); 
     	
     	Label error = new Label("");
-    	error.setStyle("-fx-text-fill: red;");
+    	error.setStyle("-fx-text-fill: red;-fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 10;");
         Label nameLabel = new Label("Entrez le nom du joueur :");
+        nameLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 10;");
+        
         TextField nameField = new TextField();
         Label gpaLabel = new Label("Entrez le GPA du joueur :");
+        gpaLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 10;");
+        
         TextField gpaField = new TextField();
         Button validateButton = new Button("Créer");
 
@@ -104,6 +108,7 @@ public class SaisiJoueurController {
         scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
         backgroundView.fitWidthProperty().bind(scene.widthProperty());
         backgroundView.fitHeightProperty().bind(scene.heightProperty());
+        layout.setMaxWidth(scene.widthProperty().multiply(0.7).get());
     }
 
     /** 

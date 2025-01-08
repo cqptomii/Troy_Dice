@@ -75,14 +75,17 @@ public class ModeJeuController {
 		Button modeUn = new Button("Mode classique");
 		modeUn.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
 		modeUn.setOnAction( event -> onChoisirMode(event, 0));
+		modeUn.setId("menuButton");
 		
 		Button modeDeux = new Button("Mode avancé");
 		modeDeux.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
 		modeDeux.setOnAction( event -> onChoisirMode(event, 1));
+		modeDeux.setId("menuButton");
 		
 		Button modeTrois = new Button("Mode aléatoire");
 		modeTrois.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
 		modeTrois.setOnAction( event -> onChoisirMode(event, 2));
+		modeTrois.setId("menuButton");
 		
 		HBox bLayout = new HBox(modeUn,modeDeux,modeTrois);
 		bLayout.setAlignment(Pos.CENTER);
@@ -99,6 +102,8 @@ public class ModeJeuController {
 		StackPane root = new StackPane(backgroundView,border);
         
         this.scene = new Scene(root, 800, 600);
+        scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+        
     }
     
     /** 
@@ -123,9 +128,10 @@ public class ModeJeuController {
 		Button bDeLancer = new Button("Lancer le dé");
 		
 		Label lDe = new Label("0");
-		 lDe.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 10;");
+		lDe.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 10;");
 		bDeLancer.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
 		bDeLancer.setOnAction(event -> onLancerDe(event, lDe));
+		bDeLancer.setId("menuButton");
 		
 		VBox deLayout = new VBox(10, lDe, bDeLancer);
 	    deLayout.setAlignment(Pos.CENTER);
@@ -137,6 +143,7 @@ public class ModeJeuController {
 			if(deValue > 0 && deValue <=6)
 				onChoisirOrdre(event, 1,deValue);
 			});
+		bDecroissant.setId("menuButton");
 		
 		Button bCroissant = new Button("Ordre croissant");
 		bCroissant.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
@@ -145,6 +152,7 @@ public class ModeJeuController {
 			if(deValue > 0 && deValue <=6)
 				onChoisirOrdre(event, 0,deValue);
 			});
+		bCroissant.setId("menuButton");
 		
 		HBox bLayout = new HBox(20, bDecroissant, bCroissant);
 	    bLayout.setAlignment(Pos.CENTER);
@@ -162,6 +170,7 @@ public class ModeJeuController {
 		StackPane root = new StackPane(backgroundView,border);
         
         this.scene = new Scene(root, 800, 600);
+        scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
     }
     
     /** 

@@ -56,8 +56,12 @@ public class NombreJoueursController {
         backgroundView.setFitWidth(800);
         backgroundView.setFitHeight(600); 
     	
+        
         Label instruction = new Label("Entrez le nombre de joueurs (2-6) :");
+        instruction.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 10;");
+        
         Label error = new Label();
+        error.setStyle("-fx-text-fill: red;-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 10;");
         TextField input = new TextField();
         Button validateButton = new Button("Valider");
 
@@ -91,7 +95,7 @@ public class NombreJoueursController {
         scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
         backgroundView.fitWidthProperty().bind(scene.widthProperty());
         backgroundView.fitHeightProperty().bind(scene.heightProperty());
-        input.prefWidthProperty().bind(scene.widthProperty().multiply(0.5));
+        layout.setMaxWidth(scene.widthProperty().multiply(0.7).get());
     }
 
     /** 

@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.ArrayList;
+
 import core.Joueur;
 import core.Simulation;
 import javafx.geometry.Insets;
@@ -61,14 +63,20 @@ public class EndController {
 		summaryBox.setPadding(new Insets(0,0,15,0));
 		
 		HBox winnerBox = this.createPlayerField(this.gameMode.getWinner(),true);
+		winnerBox.setAlignment(Pos.CENTER);
+		summaryBox.getChildren().addAll(winnerBox);
 		
-		summaryBox.getChildren().add(winnerBox);
-		
+		HBox playerBox = new HBox(30);
+		playerBox.setAlignment(Pos.CENTER);
+		playerBox.setPadding(new Insets(20,0,0,0));
 		System.out.println(this.gameMode.getJoueurs().size());
-		for(Joueur j : this.gameMode.getJoueurs()) {
-			HBox playerBox = this.createPlayerField(j,false);
-			summaryBox.getChildren().add(playerBox);
-		}
+		
+		playerBox.getChildren().addAll(
+				this.createPlayerSummary(this.gameMode.getJoueurs(), true),
+				this.createPlayerSummary(this.gameMode.getJoueurs(), false)
+				);
+		
+		summaryBox.getChildren().add(playerBox);
 		
 		root.getChildren().add(summaryBox);
 		this.scene = new Scene(root, 720*2, 576*2);
@@ -76,16 +84,6 @@ public class EndController {
 		VBox.setMargin(winnerBox, new Insets(0,0,20,0));
 		backgroundImageView.fitWidthProperty().bind(scene.widthProperty());
 		backgroundImageView.fitHeightProperty().bind(scene.heightProperty());
-		
-		this.primaryStage.widthProperty().addListener((obs, oldWidth, newWidth) -> {
-            double screenWidth = primaryStage.getWidth();
-            primaryStage.setX((screenWidth - newWidth.doubleValue()) / 2);
-        });
-
-        this.primaryStage.heightProperty().addListener((obs, oldHeight, newHeight) -> {
-            double screenHeight = primaryStage.getHeight();
-            primaryStage.setY((screenHeight - newHeight.doubleValue()) / 2);
-        });
 	}
 	
 	/** 
@@ -98,6 +96,17 @@ public class EndController {
 	 */
 	public Scene getScene() {
 		return this.scene;
+	}
+	
+	private VBox createPlayerSummary(ArrayList<Joueur> players, boolean graduated) {
+		VBox boxPlayers = new VBox();
+		for(Joueur j : players) {
+			if( (j.getScore() >= 10 && graduated) || graduated == false && j.getScore() < 10) {
+				HBox playerBox = this.createPlayerField(j,false);
+				boxPlayers.getChildren().add(playerBox);
+			}
+		}
+		return boxPlayers;
 	}
 	
 	/** 
@@ -118,8 +127,8 @@ public class EndController {
 		Label scoreLabel = new Label(String.valueOf(j.getScore()));
 		
 		if(winner) {
-			nameLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: red;");
-			scoreLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: red;");
+			nameLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+			scoreLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 		}else {
 			nameLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 			scoreLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
