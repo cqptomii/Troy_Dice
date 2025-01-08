@@ -278,10 +278,12 @@ public class Simulation {
 	 * @param		place : Place où le dé doit être récuperé
 	 * @param 		ressourceIndex : index du prix de la place
 	 * 
+	 * @exception NullPointerException : accès à une référence null
+	 * 
 	 * @see Simulation#choixDé 
 	 * @author Tom FRAISSE
 	 */
-	public void choixDé(Place place, int ressourceIndex) {
+	public void choixDé(Place place, int ressourceIndex) throws NullPointerException{
 		if(place != null) {
 			
 			try {
