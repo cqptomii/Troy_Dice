@@ -97,7 +97,7 @@ public class GameController {
 	    tour.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 	    
 	    tour.textProperty().addListener((obs,lastValue,newValue) ->{
-	    	if (this.gameMode.getTour() >= 9) {
+	    	if (this.gameMode.getTour() >= 8) {
 	    	    this.isGameOver = true;
 	    	    try {
 					this.mainApp.showEndScene();
@@ -768,13 +768,13 @@ public class GameController {
         
         String descPrestige;
         if(color == 0) {
-        	descPrestige = "Ce Batiment permet de proteger une section complète sur chacun des quartiers de votre feuille de jeu";
+        	descPrestige = "Ce bâtiment permet de protéger une section complète sur chacun des quartiers de votre feuille de jeu";
         }else if(color == 1) {
-        	descPrestige = "Ce Batiment permet l'obtention d'un montant de ressource ou d'habitants en fonctions du nombre de dés de la couleur annoncé .\n "
-        			+ " Le montant gagné est égale au produit entre le nombre de ressource et le nombre de dé de la couleur annoncée.";
+        	descPrestige = "Ce bâtiment permet l'obtention d'un montant de ressources ou d'habitants en fonction du nombre de dés de la couleur annoncée.\n "
+        			+ " Le montant gagné est égal au produit entre le nombre de ressources et le nombre de dé de la couleur annoncée.";
         }else {
-        	descPrestige = "Ce Batiment permet d'augmenter le multiplicateur sur l'ensemble des quartiers de votre feuille de jeu. \n" +
-        			" De plus il vous permettra d'activer le multiplicateur sur le type de batiment associé.";
+        	descPrestige = "Ce bâtiment permet d'augmenter le multiplicateur sur l'ensemble des quartiers de votre feuille de jeu. \n" +
+        			" De plus, il vous permettra d'activer le multiplicateur sur le type de bâtiment associé.";
         			
         }
         for (int i = 0; i < 6; ++i) {
@@ -787,7 +787,7 @@ public class GameController {
             });
             
             
-            this.setupButtonWithAlert(batPrestige,"Batiment de prestige " + colorArray[color],descPrestige);
+            this.setupButtonWithAlert(batPrestige,"Bâtiment de prestige " + colorArray[color],descPrestige);
             
             //Récupération de l'image à afficher
             int state = this.gameMode.getTourJoueur().getFeuille().getQuartier(color).getSection(i).getBatiment(0).getEtat();
@@ -807,7 +807,7 @@ public class GameController {
             batTravail.setOnAction(event -> {
                 this.gameMode.construireBatiment(color, currentPos, false);
             });
-            this.setupButtonWithAlert(batTravail,"Batiment de travail","Ceci est un Batiment de travail, il offre 2 habitants " + colorArray[color] + " lors de sa construction");
+            this.setupButtonWithAlert(batTravail,"Bâtiment de travail","Ceci est un bâtiment de travail, il offre 2 habitants " + colorArray[color] + " lors de sa construction");
             
             //Récupération de l'image à afficher
             int state = this.gameMode.getTourJoueur().getFeuille().getQuartier(color).getSection(i).getBatiment(1).getEtat();
