@@ -71,9 +71,11 @@ public class EndController {
 		playerBox.setPadding(new Insets(20,0,0,0));
 		System.out.println(this.gameMode.getJoueurs().size());
 		
+		VBox playerGraduate = this.createPlayerSummary(this.gameMode.getJoueurs(), true);
+		VBox playerUnGraduate = this.createPlayerSummary(this.gameMode.getJoueurs(), false);
 		playerBox.getChildren().addAll(
-				this.createPlayerSummary(this.gameMode.getJoueurs(), true),
-				this.createPlayerSummary(this.gameMode.getJoueurs(), false)
+				playerGraduate,
+				playerUnGraduate
 				);
 		
 		summaryBox.getChildren().add(playerBox);
@@ -81,7 +83,9 @@ public class EndController {
 		root.getChildren().add(summaryBox);
 		this.scene = new Scene(root, 720*2, 576*2);
 		
-		VBox.setMargin(winnerBox, new Insets(0,0,20,0));
+		VBox.setMargin(winnerBox, new Insets(75,0,20,0));
+		HBox.setMargin(playerUnGraduate, new Insets(125,0,0,250));
+		HBox.setMargin(playerGraduate, new Insets(125,350,0,0));
 		backgroundImageView.fitWidthProperty().bind(scene.widthProperty());
 		backgroundImageView.fitHeightProperty().bind(scene.heightProperty());
 	}
@@ -127,8 +131,8 @@ public class EndController {
 		Label scoreLabel = new Label(String.valueOf(j.getScore()));
 		
 		if(winner) {
-			nameLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
-			scoreLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+			nameLabel.setStyle("-fx-font-size: 26px; -fx-font-weight: bold;-fx-text-fill: red");
+			scoreLabel.setStyle("-fx-font-size: 26px; -fx-font-weight: bold;-fx-text-fill: red");
 		}else {
 			nameLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 			scoreLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");

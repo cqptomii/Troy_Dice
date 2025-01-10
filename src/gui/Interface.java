@@ -161,18 +161,7 @@ public class Interface extends Application{
 	 * @see Interface#run 
 	 * @author Tom FRAISSE
 	 */
-	public void run() {
-		launch();
-	}
-	
-	/** 
-	 * Méthode pricipale du programme
-	 * 
-	 * @see Interface#main 
-	 * @author Tom FRAISSE
-	 */
 	public static void main(String[] args) {
-		launch();
-		//Platform.exit()
+		launch(args);
 	}
 }
