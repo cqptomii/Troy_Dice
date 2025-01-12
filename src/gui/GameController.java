@@ -97,7 +97,7 @@ public class GameController {
 	    tour.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 	    
 	    tour.textProperty().addListener((obs,lastValue,newValue) ->{
-	    	if (this.gameMode.getTour() >= 8) {
+	    	if (this.gameMode.getTour() >= 9) {
 	    	    this.isGameOver = true;
 	    	    try {
 					this.mainApp.showEndScene();
@@ -631,7 +631,7 @@ public class GameController {
     	ImageView imageViewRessource = new ImageView();
     	
     	if (type == 0) {
-            imageUrl = "/images/xp.PNG";
+            imageUrl = "/images/xp.png";
             imageViewRessource.setFitWidth(20);
             imageViewRessource.setFitHeight(20);
         } 

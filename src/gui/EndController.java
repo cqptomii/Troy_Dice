@@ -105,7 +105,7 @@ public class EndController {
 	private VBox createPlayerSummary(ArrayList<Joueur> players, boolean graduated) {
 		VBox boxPlayers = new VBox();
 		for(Joueur j : players) {
-			if( (j.getScore() >= 10 && graduated) || graduated == false && j.getScore() < 10) {
+			if( (j.getScore() >= 20 && graduated) || graduated == false && j.getScore() < 20) {
 				HBox playerBox = this.createPlayerField(j,false);
 				boxPlayers.getChildren().add(playerBox);
 			}
